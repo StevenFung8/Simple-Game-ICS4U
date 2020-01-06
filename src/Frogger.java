@@ -5,6 +5,7 @@ public class Frogger extends JFrame implements ActionListener{
 
     }
     public static void main (String [] args){
+        System.out.println("gay sex");
         System.out.println("Send bobs and vagine");
 
     }
