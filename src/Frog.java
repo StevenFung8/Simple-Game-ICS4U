@@ -5,11 +5,11 @@ import java.awt.image.*;
 import java.io.*;
 import javax.imageio.*;
 
-class Frog extends JFrame{
+class Frog {
     private int posX,posY;
     public Frog(){
         posX = 100;
         posY = 100;
     }
-    public void move()
+    public void move(){}
 }
