@@ -1,9 +1,9 @@
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
+import java.io.IOException;
+import javax.imageio.ImageIO;
 import javax.swing.*;
-import java.awt.image.*;
-import java.io.*;
-import javax.imageio.*;
 
 public class Frogger extends JFrame{
     Timer myTimer;
@@ -38,7 +38,7 @@ public class Frogger extends JFrame{
     }
 }
 
-class GamePanel extends JPanel {
+class GamePanel extends JPanel implements KeyListener {
     private int destx,desty,boxx,boxy;
     public boolean ready=false;
     private boolean gotName=false;
@@ -46,8 +46,14 @@ class GamePanel extends JPanel {
     private Image back;
 
     public GamePanel(){
+        try {
+            back = ImageIO.read(new File("froggerBackground.png"));
+        }
+        catch (IOException e) {
+        }
+        setSize(800,600);
         keys = new boolean[KeyEvent.KEY_LAST+1];
-        back = new ImageIcon("OuterSpace.jpg").getImage();
+        //back = new ImageIcon("froggerBackground.png").getImage();
         addMouseListener(new clickListener());
         boxx=200;
         boxy=200;
@@ -98,6 +104,7 @@ class GamePanel extends JPanel {
         g.fillOval(destx,desty,10,10);
         g.setColor(Color.red);
         g.fillRect(boxx,boxy,20,20);
+        g.drawImage(back,0,0,this);
 
 
     }
