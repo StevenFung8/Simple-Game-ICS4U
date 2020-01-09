@@ -4,9 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import java.awt.image.*;
-import java.io.*;
-import javax.imageio.*;
 
 public class Frogger extends JFrame{
     Timer myTimer;
@@ -15,7 +12,7 @@ public class Frogger extends JFrame{
     public Frogger() {
         super("Frogger Dylan & Steven ltd copyright");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(1080,700);
+        setSize(810,785);
 
         myTimer = new Timer(10, new TickListener());
         myTimer.start();
@@ -42,64 +39,57 @@ public class Frogger extends JFrame{
 }
 
 class GamePanel extends JPanel implements KeyListener {
-    private int frogx,frogy;
+    private int destx,desty,boxx,boxy;
     public boolean ready=false;
     private boolean gotName=false;
     private boolean []keys;
     private Image back;
 
     public GamePanel(){
+        try {
+            back = ImageIO.read(new File("Pictures/froggerBackground.png"));
+        }
+        catch (IOException e) {
+        }
         keys = new boolean[KeyEvent.KEY_LAST+1];
         back = new ImageIcon("OuterSpace.jpg").getImage();
         frogx=200;
         frogy=200;
         addKeyListener(this);
-        setSize(1080,700);
+        setSize(800,751);
+    }
+    public void keyTyped(KeyEvent e) {}
+
+    public void keyPressed(KeyEvent e) {
+        keys[e.getKeyCode()] = true;
+    }
+
+    public void keyReleased(KeyEvent e) {
+        keys[e.getKeyCode()] = false;
     }
 
 
     public void addNotify() {
-        requestFocus();
         super.addNotify();
+        requestFocus();
         ready = true;
     }
 
-    public void move() {
-        System.out.println("checking");
-        if(keys[KeyEvent.VK_RIGHT]){
-            System.out.println("right");
-            frogx+=5;
-        }
-        if(keys[KeyEvent.VK_LEFT]){
-            System.out.println("right");
-            frogx-=5;
-        }
-        if(keys[KeyEvent.VK_UP]){
-            System.out.println("right");
-            frogy+=5;
-        }
-        if(keys[KeyEvent.VK_DOWN]){
-            System.out.println("right");
-            frogy-=5;
-        }
-    }
+
     @Override
     public void paintComponent(Graphics g){
-        g.setColor(new Color(255,222,222));
+        g.setColor(new Color(222,222,255));
         g.fillRect(0,0,getWidth(),getHeight());
         g.setColor(Color.blue);
         g.fillRect(frogx,frogy,40,40);
     }
 
-    @Override
-    public void keyTyped(KeyEvent keyEvent) {
-        if(g.getKeyCode())
     }
 
     @Override
     public void keyPressed(KeyEvent keyEvent) {
 
-    }
+
 
     @Override
     public void keyReleased(KeyEvent keyEvent) {
