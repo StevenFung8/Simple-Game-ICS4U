@@ -12,7 +12,7 @@ public class Frogger extends JFrame{
     public Frogger() {
         super("Frogger Dylan & Steven ltd copyright");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(1080,700);
+        setSize(810,785);
 
         myTimer = new Timer(10, new TickListener());
         myTimer.start();
@@ -47,11 +47,10 @@ class GamePanel extends JPanel implements KeyListener {
 
     public GamePanel(){
         try {
-            back = ImageIO.read(new File("froggerBackground.png"));
+            back = ImageIO.read(new File("Pictures/froggerBackground.png"));
         }
         catch (IOException e) {
         }
-        setSize(800,600);
         keys = new boolean[KeyEvent.KEY_LAST+1];
         //back = new ImageIcon("froggerBackground.png").getImage();
         addMouseListener(new clickListener());
@@ -59,7 +58,7 @@ class GamePanel extends JPanel implements KeyListener {
         boxy=200;
         destx=500;
         desty=200;
-        setSize(1080,700);
+        setSize(800,751);
     }
     public void keyTyped(KeyEvent e) {}
 
@@ -74,6 +73,7 @@ class GamePanel extends JPanel implements KeyListener {
 
     public void addNotify() {
         super.addNotify();
+        requestFocus();
         ready = true;
     }
 
@@ -92,12 +92,13 @@ class GamePanel extends JPanel implements KeyListener {
         }
         if(boxx==destx && !gotName){
             gotName = true;
-            String name = JOptionPane.showInputDialog("Name:");
-            System.out.println(name);
+            //String name = JOptionPane.showInputDialog("Name:");
+            //System.out.println(name);
         }
     }
 
     public void paintComponent(Graphics g){
+
         g.setColor(new Color(222,222,255));
         g.fillRect(0,0,getWidth(),getHeight());
         g.setColor(new Color(255,111,111));
@@ -105,6 +106,8 @@ class GamePanel extends JPanel implements KeyListener {
         g.setColor(Color.red);
         g.fillRect(boxx,boxy,20,20);
         g.drawImage(back,0,0,this);
+
+
 
 
     }
