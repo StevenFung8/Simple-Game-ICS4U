@@ -38,8 +38,8 @@ public class Frogger extends JFrame{
     }
 }
 
-class GamePanel extends JPanel {
-    private int destx,desty,boxx,boxy;
+class GamePanel extends JPanel implements KeyListener {
+    private int frogx,frogy;
     public boolean ready=false;
     private boolean gotName=false;
     private boolean []keys;
@@ -48,72 +48,58 @@ class GamePanel extends JPanel {
     public GamePanel(){
         keys = new boolean[KeyEvent.KEY_LAST+1];
         back = new ImageIcon("OuterSpace.jpg").getImage();
-        addMouseListener(new clickListener());
-        boxx=200;
-        boxy=200;
-        destx=500;
-        desty=200;
+        frogx=200;
+        frogy=200;
+        addKeyListener(this);
         setSize(1080,700);
-    }
-    public void keyTyped(KeyEvent e) {}
-
-    public void keyPressed(KeyEvent e) {
-        keys[e.getKeyCode()] = true;
-    }
-
-    public void keyReleased(KeyEvent e) {
-        keys[e.getKeyCode()] = false;
     }
 
 
     public void addNotify() {
+        requestFocus();
         super.addNotify();
         ready = true;
     }
 
     public void move() {
-        if(boxx<destx){
-            boxx+=5;
+        System.out.println("checking");
+        if(keys[KeyEvent.VK_RIGHT]){
+            System.out.println("right");
+            frogx+=5;
         }
-        if(boxx>destx){
-            boxx-=5;
+        if(keys[KeyEvent.VK_LEFT]){
+            System.out.println("right");
+            frogx-=5;
         }
-        if(boxy<desty){
-            boxy+=5;
+        if(keys[KeyEvent.VK_UP]){
+            System.out.println("right");
+            frogy+=5;
         }
-        if(boxy>desty){
-            boxy-=5;
-        }
-        if(boxx==destx && !gotName){
-            gotName = true;
-            String name = JOptionPane.showInputDialog("Name:");
-            System.out.println(name);
+        if(keys[KeyEvent.VK_DOWN]){
+            System.out.println("right");
+            frogy-=5;
         }
     }
-
+    @Override
     public void paintComponent(Graphics g){
-        g.setColor(new Color(222,222,255));
+        g.setColor(new Color(255,222,222));
         g.fillRect(0,0,getWidth(),getHeight());
-        g.setColor(new Color(255,111,111));
-        g.fillOval(destx,desty,10,10);
-        g.setColor(Color.red);
-        g.fillRect(boxx,boxy,20,20);
+        g.setColor(Color.blue);
+        g.fillRect(frogx,frogy,40,40);
+    }
 
+    @Override
+    public void keyTyped(KeyEvent keyEvent) {
+        if(g.getKeyCode())
+    }
+
+    @Override
+    public void keyPressed(KeyEvent keyEvent) {
 
     }
 
-    class clickListener implements MouseListener{
-        // ------------ MouseListener ------------------------------------------
-        public void mouseEntered(MouseEvent e) {}
-        public void mouseExited(MouseEvent e) {}
-        public void mouseReleased(MouseEvent e) {}
-        public void mouseClicked(MouseEvent e){}
+    @Override
+    public void keyReleased(KeyEvent keyEvent) {
 
-        public void mousePressed(MouseEvent e){
-            destx = e.getX();
-            desty = e.getY();
-        }
     }
-
-
 }
