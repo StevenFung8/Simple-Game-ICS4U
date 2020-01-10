@@ -15,7 +15,7 @@ public class Frogger extends JFrame{
     public Frogger() {
         super("Frogger Dylan & Steven ltd copyright");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(1080,700);
+        setSize(810,785);
 
         myTimer = new Timer(10, new TickListener());
         myTimer.start();
@@ -30,7 +30,6 @@ public class Frogger extends JFrame{
     class TickListener implements ActionListener{
         public void actionPerformed(ActionEvent evt){
             if(game!= null && game.ready){
-
                 game.repaint();
             }
         }
@@ -38,6 +37,7 @@ public class Frogger extends JFrame{
 
     public static void main(String[] arguments) {
         Frogger frame = new Frogger();
+
     }
 }
 class Obstacle{
@@ -49,16 +49,19 @@ class GamePanel extends JPanel implements KeyListener {
     private int frogx,frogy;
     public boolean ready=false;
     private boolean gotName=false;
-    private boolean []keysPressed;
-    private Image back;
+    private boolean []keys;
+    private boolean [] keysPressed;
+    private Image back,frogPic;
 
     public GamePanel(){
-        keysPressed = new boolean[KeyEvent.KEY_LAST+1];
-        back = new ImageIcon("OuterSpace.jpg").getImage();
-        frogx=200;
-        frogy=200;
-        addKeyListener(this);
-        setSize(1080,700);
+        try {
+            back = ImageIO.read(new File("Pictures/froggerBackground.png"));
+            frogPic = ImageIO.read(new File("Pictures/frogger.png"));
+        }
+        catch (IOException e) {
+        }
+        keys = new boolean[KeyEvent.KEY_LAST+1];
+        setSize(800,751);
     }
 
 
@@ -70,19 +73,17 @@ class GamePanel extends JPanel implements KeyListener {
     }
 
 
-
     @Override
     public void paintComponent(Graphics g){
-        g.setColor(new Color(255,222,222));
-        g.fillRect(0,0,getWidth(),getHeight());
+        g.drawImage(back,0,0,this);
         g.setColor(Color.blue);
         g.fillRect(frogx,frogy,40,40);
+        g.drawImage(frogPic,frogx,frogy,this);
     }
 
     @Override
-    public void keyTyped(KeyEvent keyEvent) {
+    public void keyTyped(KeyEvent keyEvent) {}
 
-    }
 
     @Override
     public void keyPressed(KeyEvent k) {
