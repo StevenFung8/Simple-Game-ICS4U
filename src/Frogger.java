@@ -43,7 +43,7 @@ public class Frogger extends JFrame{
 class Obstacle{
     private int sizex,sizey;
     private Image pic;
-
+    0
 }
 class GamePanel extends JPanel implements KeyListener {
     private int frogx,frogy;
