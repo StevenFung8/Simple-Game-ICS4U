@@ -4,9 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import java.awt.image.*;
-import java.io.*;
-import javax.imageio.*;
+import javax.swing.Timer;
+import java.util.*;
+
 
 public class Frogger extends JFrame{
     Timer myTimer;
@@ -37,31 +37,36 @@ public class Frogger extends JFrame{
 
     public static void main(String[] arguments) {
         Frogger frame = new Frogger();
-
     }
 }
-class Obstacle{
-    private int sizex,sizey;
-    private Image pic;
 
-}
 class GamePanel extends JPanel implements KeyListener {
     private int frogx,frogy;
     public boolean ready=false;
     private boolean gotName=false;
     private boolean []keys;
     private boolean [] keysPressed;
-    private Image back,frogPic;
+    private Image back,frogPic,car1,car2,car3,log1,log2,log3;
+
 
     public GamePanel(){
         try {
             back = ImageIO.read(new File("Pictures/froggerBackground.png"));
             frogPic = ImageIO.read(new File("Pictures/frogger.png"));
+            car1 = ImageIO.read(new File("Pictures/car1.png"));
+            car2 = ImageIO.read(new File("Pictures/car2.png"));
+            car3 = ImageIO.read(new File("Pictures/car3.png"));
+            log1 = ImageIO.read(new File("Pictures/log1.png"));
+            log2 = ImageIO.read(new File("Pictures/log2.png"));
+            log3 = ImageIO.read(new File("Pictures/log3.png"));
         }
         catch (IOException e) {
         }
         keys = new boolean[KeyEvent.KEY_LAST+1];
         setSize(800,751);
+        frogx = 200;
+        frogy = 200;
+        addKeyListener(this);
     }
 
 
@@ -76,9 +81,12 @@ class GamePanel extends JPanel implements KeyListener {
     @Override
     public void paintComponent(Graphics g){
         g.drawImage(back,0,0,this);
-        g.setColor(Color.blue);
-        g.fillRect(frogx,frogy,40,40);
         g.drawImage(frogPic,frogx,frogy,this);
+        g.drawImage(car1,100,650,this);
+        g.drawImage(car2,200,590,this);
+        g.drawImage(car3,300,530,this);
+        g.drawImage(log1,400,280,this);
+
     }
 
     @Override
