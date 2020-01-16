@@ -73,9 +73,9 @@ class GamePanel extends JPanel implements KeyListener {
         frogy = 200;
         addKeyListener(this);
         loadLanes();
-        while (true) {
-            movement();
-        }
+        movement();
+        System.out.println("penis");
+
     }
 
 
@@ -126,7 +126,6 @@ class GamePanel extends JPanel implements KeyListener {
                     g.drawImage(car1, a.getAx(), a.getAy() + 5, this);
                 }
                 if (i>=0 && i<5){
-                    int randCar = randint(1,3);
                     g.drawImage(log1, a.getAx(),a.getAy(),this);
                 }
             }
