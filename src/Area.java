@@ -27,8 +27,7 @@ class Area {
     public String toString(){
         return String.format("%d,%d,%d,%d",ax,ay,width,height);
     }
-    public void addAx(int interval) {
-        ax += interval;
-        System.out.println("AX is: " + ax);
+    public void setAx(int interval) {
+        ax = interval;
     }
 }

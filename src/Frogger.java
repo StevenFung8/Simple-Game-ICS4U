@@ -28,9 +28,10 @@ public class Frogger extends JFrame{
         setVisible(true);
     }
 
-    class TickListener implements ActionListener{
+    class TickListener implements ActionListener{ //CALL FUNCTIONS HERE (JUST LIKE PYGAME "WHILE RUNNING LOOP")
         public void actionPerformed(ActionEvent evt){
             if(game!= null && game.ready){
+                game.movement();
                 game.repaint();
             }
         }
@@ -52,7 +53,7 @@ class GamePanel extends JPanel implements KeyListener {
     private boolean [] keysPressed ;
     private static Image back,frogPic,car1,car2,car3,log1,log2,log3;
     private static Lanes lanes[] = new Lanes [12];
-    private static Image obstaclePics [] = {back,frogPic,car1,car2,car3,log1,log2,log3};
+    private static Image[] obstaclePics ;
 
     public GamePanel(){
         try {
@@ -68,12 +69,13 @@ class GamePanel extends JPanel implements KeyListener {
         catch (IOException e) {
             System.out.println(e);
         }
+        obstaclePics = new Image[]{car1, car2, car3, log1, log2, log3};
         keys = new boolean[KeyEvent.KEY_LAST+1];
         frogx = 200;
         frogy = 200;
         addKeyListener(this);
         loadLanes();
-        movement();
+
         System.out.println("penis");
 
     }
@@ -92,10 +94,10 @@ class GamePanel extends JPanel implements KeyListener {
         for (int i = 0; i<12 ; i ++){
             Lanes makeLanes;
             if (i%2 == 1) {
-                makeLanes = new Lanes(90 + 55 * i, 3, "RIGHT");
+                makeLanes = new Lanes(90 + 55 * i, 2, "RIGHT");
             }
             else{
-                makeLanes = new Lanes(90 + 55 * i, 3 ,"LEFT");
+                makeLanes = new Lanes(90 + 55 * i, 2 ,"LEFT");
             }
             lanes[i] = makeLanes;
         }
@@ -103,10 +105,7 @@ class GamePanel extends JPanel implements KeyListener {
 
     public static void movement(){
         for (Lanes l : lanes){
-            int counter = 0;
             l.moveLanes();
-            counter++;
-            System.out.println(counter);
 
         }
     }
@@ -123,7 +122,7 @@ class GamePanel extends JPanel implements KeyListener {
             for (Area a : lanes[i].getAreas()){ //start at 6
                 //System.out.println(a);
                 if (i>=6 && i < 11) { /// lanes on the road
-                    g.drawImage(car1, a.getAx(), a.getAy() + 5, this);
+                    g.drawImage(obstaclePics[randint(0,2)], a.getAx(), a.getAy() + 5, this); /// put pictures into Lanes class
                 }
                 if (i>=0 && i<5){
                     g.drawImage(log1, a.getAx(),a.getAy(),this);

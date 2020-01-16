@@ -28,10 +28,16 @@ class Lanes {
     public void moveLanes(){
         for (Area a : areas){
             if (direction == "LEFT"){
-                a.addAx(-speed);
+                a.setAx(a.getAx() - speed);
+                if (a.getAx() <=-130){
+                    a.setAx(900);
+                }
             }
             else{
-                a.addAx(speed);
+                a.setAx(a.getAx() + speed);
+                if (a.getAx() >=900){
+                    a.setAx(-130);
+                }
             }
         }
     }
