@@ -4,9 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import java.awt.image.*;
-import java.io.*;
-import javax.imageio.*;
+import javax.swing.Timer;
+import java.util.*;
+
 
 public class Frogger extends JFrame{
     Timer myTimer;
@@ -43,25 +43,39 @@ public class Frogger extends JFrame{
 class Obstacle{
     private int sizex,sizey;
     private Image pic;
-    0
+
 }
 class GamePanel extends JPanel implements KeyListener {
     private int frogx,frogy;
     public boolean ready=false;
     private boolean gotName=false;
     private boolean []keys;
-    private boolean [] keysPressed;
-    private Image back,frogPic;
+    private boolean [] keysPressed ;
+    private static Image back,frogPic,car1,car2,car3,log1,log2,log3;
+    private static Lanes lanes[] = new Lanes [12];
+    private static Image obstaclePics [] = {back,frogPic,car1,car2,car3,log1,log2,log3};
 
     public GamePanel(){
         try {
             back = ImageIO.read(new File("Pictures/froggerBackground.png"));
             frogPic = ImageIO.read(new File("Pictures/frogger.png"));
+            car1 = ImageIO.read(new File("Pictures/car1.png"));
+            car2 = ImageIO.read(new File("Pictures/car2.png"));
+            car3 = ImageIO.read(new File("Pictures/car3.png"));
+            log1 = ImageIO.read(new File("Pictures/log1.png"));
+            log2 = ImageIO.read(new File("Pictures/log2.png"));
+            log3 = ImageIO.read(new File("Pictures/log3.png"));
         }
         catch (IOException e) {
         }
         keys = new boolean[KeyEvent.KEY_LAST+1];
-        setSize(800,751);
+        frogx = 200;
+        frogy = 200;
+        addKeyListener(this);
+        loadLanes();
+        while (true) {
+            movement();
+        }
     }
 
 
@@ -71,14 +85,54 @@ class GamePanel extends JPanel implements KeyListener {
         requestFocus();
         ready = true;
     }
+    public int randint(int low, int high){
+        return (int)(Math.random()*(high-low+1)+low);
+    }
+    public static void loadLanes(){
+        for (int i = 0; i<12 ; i ++){
+            Lanes makeLanes;
+            if (i%2 == 1) {
+                makeLanes = new Lanes(90 + 55 * i, 3, "RIGHT");
+            }
+            else{
+                makeLanes = new Lanes(90 + 55 * i, 3 ,"LEFT");
+            }
+            lanes[i] = makeLanes;
+        }
+    }
 
+    public static void movement(){
+        for (Lanes l : lanes){
+            int counter = 0;
+            l.moveLanes();
+            counter++;
+            System.out.println(counter);
+
+        }
+    }
 
     @Override
     public void paintComponent(Graphics g){
+        g.setColor(new Color(255,222,222));
         g.drawImage(back,0,0,this);
-        g.setColor(Color.blue);
-        g.fillRect(frogx,frogy,40,40);
-        g.drawImage(frogPic,frogx,frogy,this);
+        g.drawImage(frogPic,player.getPosX(),player.getPosY(),this);
+        //for (Lanes l : lanes){
+        for (int i = 0; i<12;i++){
+            g.setColor(new Color(255,222,222));
+            // g.drawRect(0,lanes[i].getYPos(),800,751); draw the lanes
+            for (Area a : lanes[i].getAreas()){ //start at 6
+                //System.out.println(a);
+                if (i>=6 && i < 11) { /// lanes on the road
+                    g.drawImage(car1, a.getAx(), a.getAy() + 5, this);
+                }
+                if (i>=0 && i<5){
+                    int randCar = randint(1,3);
+                    g.drawImage(log1, a.getAx(),a.getAy(),this);
+                }
+            }
+
+        }
+
     }
 
     @Override
