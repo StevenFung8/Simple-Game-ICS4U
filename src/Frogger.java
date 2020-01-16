@@ -15,13 +15,14 @@ public class Frogger extends JFrame{
     public Frogger() {
         super("Frogger Dylan & Steven ltd copyright");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(810,785);
+        setSize(810,795);
 
         myTimer = new Timer(10, new TickListener());
         myTimer.start();
 
         game = new GamePanel();
         add(game);
+
 
         setResizable(false);
         setVisible(true);
@@ -36,18 +37,22 @@ public class Frogger extends JFrame{
     }
 
     public static void main(String[] arguments) {
+
         Frogger frame = new Frogger();
+
     }
 }
 
 class GamePanel extends JPanel implements KeyListener {
+    Frog player = new Frog();
     private int frogx,frogy;
     public boolean ready=false;
     private boolean gotName=false;
     private boolean []keys;
-    private boolean [] keysPressed;
-    private Image back,frogPic,car1,car2,car3,log1,log2,log3;
-
+    private boolean [] keysPressed ;
+    private static Image back,frogPic,car1,car2,car3,log1,log2,log3;
+    private static Lanes lanes[] = new Lanes [12];
+    private static Image obstaclePics [] = {back,frogPic,car1,car2,car3,log1,log2,log3};
 
     public GamePanel(){
         try {
@@ -61,12 +66,16 @@ class GamePanel extends JPanel implements KeyListener {
             log3 = ImageIO.read(new File("Pictures/log3.png"));
         }
         catch (IOException e) {
+            System.out.println(e);
         }
         keys = new boolean[KeyEvent.KEY_LAST+1];
-        setSize(800,751);
         frogx = 200;
         frogy = 200;
         addKeyListener(this);
+        loadLanes();
+        while (true) {
+            movement();
+        }
     }
 
 
@@ -76,16 +85,53 @@ class GamePanel extends JPanel implements KeyListener {
         requestFocus();
         ready = true;
     }
+    public int randint(int low, int high){
+        return (int)(Math.random()*(high-low+1)+low);
+    }
+    public static void loadLanes(){
+        for (int i = 0; i<12 ; i ++){
+            Lanes makeLanes;
+            if (i%2 == 1) {
+                makeLanes = new Lanes(90 + 55 * i, 3, "RIGHT");
+            }
+            else{
+                makeLanes = new Lanes(90 + 55 * i, 3 ,"LEFT");
+            }
+            lanes[i] = makeLanes;
+        }
+    }
 
+    public static void movement(){
+        for (Lanes l : lanes){
+            int counter = 0;
+            l.moveLanes();
+            counter++;
+            System.out.println(counter);
+
+        }
+    }
 
     @Override
     public void paintComponent(Graphics g){
+        g.setColor(new Color(255,222,222));
         g.drawImage(back,0,0,this);
-        g.drawImage(frogPic,frogx,frogy,this);
-        g.drawImage(car1,100,650,this);
-        g.drawImage(car2,200,590,this);
-        g.drawImage(car3,300,530,this);
-        g.drawImage(log1,400,280,this);
+        g.drawImage(frogPic,player.getPosX(),player.getPosY(),this);
+        //for (Lanes l : lanes){
+        for (int i = 0; i<12;i++){
+            g.setColor(new Color(255,222,222));
+            // g.drawRect(0,lanes[i].getYPos(),800,751); draw the lanes
+            for (Area a : lanes[i].getAreas()){ //start at 6
+                //System.out.println(a);
+                if (i>=6 && i < 11) { /// lanes on the road
+                    g.drawImage(car1, a.getAx(), a.getAy() + 5, this);
+                }
+                if (i>=0 && i<5){
+                    int randCar = randint(1,3);
+                    g.drawImage(log1, a.getAx(),a.getAy(),this);
+                }
+            }
+
+        }
 
     }
 
@@ -98,19 +144,23 @@ class GamePanel extends JPanel implements KeyListener {
         System.out.println("skfkabdk");
         if(k.getKeyCode()==KeyEvent.VK_RIGHT && !keysPressed[KeyEvent.VK_RIGHT]){
             System.out.println("Right");
+            player.movePos(40,0);
             frogx+=40;
         }
 
         if(k.getKeyCode()==KeyEvent.VK_LEFT && !keysPressed[KeyEvent.VK_LEFT]){
             System.out.println("Left");
+            player.movePos(-40,0);
             frogx-=40;
         }
         if(k.getKeyCode()==KeyEvent.VK_UP && !keysPressed[KeyEvent.VK_UP]){
             System.out.println("Up");
+            player.movePos(0,40);
             frogy-=40;
         }
         if(k.getKeyCode()==KeyEvent.VK_DOWN && !keysPressed[KeyEvent.VK_DOWN]){
             System.out.println("Down");
+            player.movePos(0,40);
             frogy+=40;
         }
         keysPressed[k.getKeyCode()]=true;

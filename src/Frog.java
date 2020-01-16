@@ -8,8 +8,18 @@ import javax.imageio.*;
 class Frog {
     private int posX,posY;
     public Frog(){
-        posX = 100;
-        posY = 100;
+        posX = 400;
+        posY = 770;
     }
-    public void move(){}
+
+    public int getPosX(){
+        return posX;
+    }
+    public int getPosY(){
+        return posY;
+    }
+    public void movePos(int intervalX, int intervalY){
+        posX += intervalX;
+        posY += intervalY;
+    }
 }
