@@ -42,11 +42,6 @@ public class Frogger extends JFrame{
 
     }
 }
-class Obstacle{
-    private int sizex,sizey;
-    private Image pic;
-
-}
 class GamePanel extends JPanel implements KeyListener {
     private int frogx,frogy;
     Frog player = new Frog();
