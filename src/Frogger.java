@@ -15,7 +15,7 @@ public class Frogger extends JFrame{
     public Frogger() {
         super("Frogger Dylan & Steven ltd copyright");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(810,785);
+        setSize(810,795);
 
         myTimer = new Timer(10, new TickListener());
         myTimer.start();
@@ -30,7 +30,9 @@ public class Frogger extends JFrame{
     class TickListener implements ActionListener{
         public void actionPerformed(ActionEvent evt){
             if(game!= null && game.ready){
+                game.move();
                 game.repaint();
+                game.setClick();
             }
         }
     }
@@ -47,15 +49,17 @@ class Obstacle{
 }
 class GamePanel extends JPanel implements KeyListener {
     private int frogx,frogy;
+    Frog player = new Frog();
     public boolean ready=false;
-    private boolean gotName=false;
+    private boolean click;
     private boolean []keys;
-    private boolean [] keysPressed ;
+
     private static Image back,frogPic,car1,car2,car3,log1,log2,log3;
     private static Lanes lanes[] = new Lanes [12];
     private static Image obstaclePics [] = {back,frogPic,car1,car2,car3,log1,log2,log3};
 
     public GamePanel(){
+        keys = new boolean[KeyEvent.KEY_LAST+1];
         try {
             back = ImageIO.read(new File("Pictures/froggerBackground.png"));
             frogPic = ImageIO.read(new File("Pictures/frogger.png"));
@@ -68,19 +72,20 @@ class GamePanel extends JPanel implements KeyListener {
         }
         catch (IOException e) {
         }
-        keys = new boolean[KeyEvent.KEY_LAST+1];
+
+
         frogx = 200;
         frogy = 200;
         addKeyListener(this);
         loadLanes();
         movement();
-        System.out.println("penis");
 
     }
 
-
+    public void setClick(){
+        click=false;
+    }
     public void addNotify() {
-
         super.addNotify();
         requestFocus();
         ready = true;
@@ -111,26 +116,50 @@ class GamePanel extends JPanel implements KeyListener {
         }
     }
 
+    public void move() {
+        if (click) {
+            if (keys[KeyEvent.VK_RIGHT]) {
+                System.out.println("Right");
+                player.moveRight();
+            }
+
+            if (keys[KeyEvent.VK_LEFT]) {
+                System.out.println("Left");
+                player.moveLeft();
+            }
+            if (keys[KeyEvent.VK_UP]) {
+                System.out.println("Up");
+                player.moveUp();
+            }
+            if (keys[KeyEvent.VK_DOWN]) {
+                System.out.println("Down");
+                player.moveDown();
+            }
+        }
+        player.checkBound();
+    }
     @Override
     public void paintComponent(Graphics g){
         g.setColor(new Color(255,222,222));
         g.drawImage(back,0,0,this);
-        g.drawImage(frogPic,player.getPosX(),player.getPosY(),this);
+
         //for (Lanes l : lanes){
         for (int i = 0; i<12;i++){
             g.setColor(new Color(255,222,222));
-            // g.drawRect(0,lanes[i].getYPos(),800,751); draw the lanes
+             g.drawRect(0,lanes[i].getYPos(),800,751);
             for (Area a : lanes[i].getAreas()){ //start at 6
                 //System.out.println(a);
                 if (i>=6 && i < 11) { /// lanes on the road
                     g.drawImage(car1, a.getAx(), a.getAy() + 5, this);
                 }
                 if (i>=0 && i<5){
+                    int randCar = randint(1,3);
                     g.drawImage(log1, a.getAx(),a.getAy(),this);
                 }
             }
 
         }
+        g.drawImage(frogPic,player.getPosX(),player.getPosY(),this);
 
     }
 
@@ -140,30 +169,14 @@ class GamePanel extends JPanel implements KeyListener {
 
     @Override
     public void keyPressed(KeyEvent k) {
-        System.out.println("skfkabdk");
-        if(k.getKeyCode()==KeyEvent.VK_RIGHT && !keysPressed[KeyEvent.VK_RIGHT]){
-            System.out.println("Right");
-            frogx+=40;
-        }
-
-        if(k.getKeyCode()==KeyEvent.VK_LEFT && !keysPressed[KeyEvent.VK_LEFT]){
-            System.out.println("Left");
-            frogx-=40;
-        }
-        if(k.getKeyCode()==KeyEvent.VK_UP && !keysPressed[KeyEvent.VK_UP]){
-            System.out.println("Up");
-            frogy-=40;
-        }
-        if(k.getKeyCode()==KeyEvent.VK_DOWN && !keysPressed[KeyEvent.VK_DOWN]){
-            System.out.println("Down");
-            frogy+=40;
-        }
-        keysPressed[k.getKeyCode()]=true;
+        keys[k.getKeyCode()]=true;
+        click=true;
 
     }
 
     @Override
     public void keyReleased(KeyEvent k) {
-        keysPressed[k.getKeyCode()]=false;
+        keys[k.getKeyCode()]=false;
+        click=false;
     }
 }
