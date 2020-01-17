@@ -119,6 +119,7 @@ class GamePanel extends JPanel implements KeyListener {
     public void move() {
         if (click) {
             if (keys[KeyEvent.VK_RIGHT]) {
+                System.out.println("gayfef");
                 System.out.println("Right");
                 player.moveRight();
             }
