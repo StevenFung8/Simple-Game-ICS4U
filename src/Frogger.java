@@ -5,8 +5,6 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.Timer;
-import java.util.*;
-
 
 public class Frogger extends JFrame{
     Timer myTimer;
@@ -28,10 +26,12 @@ public class Frogger extends JFrame{
         setVisible(true);
     }
 
-    class TickListener implements ActionListener{
+    class TickListener implements ActionListener{ //CALL FUNCTIONS HERE (JUST LIKE PYGAME "WHILE RUNNING LOOP")
         public void actionPerformed(ActionEvent evt){
             if(game!= null && game.ready){
+                game.laneMovement();
                 game.move();
+                game.collision();
                 game.repaint();
                 game.setClick();
             }
@@ -39,7 +39,6 @@ public class Frogger extends JFrame{
     }
 
     public static void main(String[] arguments) {
-
         Frogger frame = new Frogger();
 
     }
@@ -47,44 +46,57 @@ public class Frogger extends JFrame{
 
 class GamePanel extends JPanel implements KeyListener {
     Frog player = new Frog();
-    private int frogx,frogy;
     public boolean ready=false;
-    private boolean click;
+    private boolean gotName=false;
     private boolean []keys;
     private boolean [] keysPressed ;
-    private static Image back,frogPic,car1,car2,car3,log1,log2,log3;
+    private static Image back,frogPic,winFrogPic,heart;
     private static Lanes lanes[] = new Lanes [12];
-    private static Image obstaclePics [] = {back,frogPic,car1,car2,car3,log1,log2,log3};
+    private static Rectangle winAreas[] = {new Rectangle(25,25,70,70),new Rectangle(195,25,70,70),new Rectangle(370,25,70,70),new Rectangle(540,25,70,70),new Rectangle(713,25,70,70)};
+    private boolean click;
 
     public GamePanel(){
-        keys = new boolean[KeyEvent.KEY_LAST+1];
+
         try {
             back = ImageIO.read(new File("Pictures/froggerBackground.png"));
             frogPic = ImageIO.read(new File("Pictures/frogger.png"));
-            car1 = ImageIO.read(new File("Pictures/car1.png"));
-            car2 = ImageIO.read(new File("Pictures/car2.png"));
-            car3 = ImageIO.read(new File("Pictures/car3.png"));
-            log1 = ImageIO.read(new File("Pictures/log1.png"));
-            log2 = ImageIO.read(new File("Pictures/log2.png"));
-            log3 = ImageIO.read(new File("Pictures/log3.png"));
+            winFrogPic = ImageIO.read(new File("Pictures/winFrog.png"));
+            heart = ImageIO.read(new File("Pictures/heart.png"));
         }
         catch (IOException e) {
             System.out.println(e);
         }
+
         keys = new boolean[KeyEvent.KEY_LAST+1];
-        frogx = 200;
-        frogy = 200;
         addKeyListener(this);
         loadLanes();
-        movement();
+
 
     }
-
     public void setClick(){
         click=false;
     }
-    public void addNotify() {
 
+    public void move() {
+        if (click) {
+            if (keys[KeyEvent.VK_RIGHT]) {
+                player.moveRight();
+            }
+
+            if (keys[KeyEvent.VK_LEFT]) {
+                player.moveLeft();
+            }
+            if (keys[KeyEvent.VK_UP]) {
+                player.moveUp();
+            }
+            if (keys[KeyEvent.VK_DOWN]) {
+                player.moveDown();
+            }
+        }
+        player.checkBound();
+    }
+
+    public void addNotify() {
         super.addNotify();
         requestFocus();
         ready = true;
@@ -94,70 +106,129 @@ class GamePanel extends JPanel implements KeyListener {
     }
     public static void loadLanes(){
         for (int i = 0; i<12 ; i ++){
-            Lanes makeLanes;
+            Lanes makeLanes = null;
             if (i%2 == 1) {
-                makeLanes = new Lanes(90 + 55 * i, 2, "RIGHT");
+                if (i>5 && i<11){
+                    makeLanes = new Lanes(90 + 55 * i, 1, "RIGHT","road");
+                }
+                if (i>=0 && i<5){
+                    makeLanes = new Lanes(90 + 55 * i, 1, "RIGHT","water");
+                }
             }
             else{
-                makeLanes = new Lanes(90 + 55 * i, 2 ,"LEFT");
+                if (i>5 && i<11){
+                    makeLanes = new Lanes(90 + 55 * i, 1, "LEFT","road");
+                }
+                if (i>=0 && i< 5){
+                    makeLanes = new Lanes(90 + 55 * i, 1, "LEFT","water");
+                }
             }
             lanes[i] = makeLanes;
         }
     }
 
-    public static void movement(){
-        for (Lanes l : lanes){
-            int counter = 0;
-            l.moveLanes();
-            counter++;
-            System.out.println(counter);
-
+    public static void laneMovement(){
+        for (int i = 0; i<12;i++){
+            if ((i>5 && i<11) || (i>=0 && i<5) ) {
+                lanes[i].moveLanes();
+            }
+        }
+    }
+    public boolean collisionCheck(Frog player, Area a){
+        return player.getX() < a.getAx() + a.getWidth() - 5 &&
+                player.getX() + a.getWidth() > a.getAx() &&
+                player.getY() < a.getAy() + a.getHeight() &&
+                player.getY() + a.getHeight() > a.getAy();
+    }
+    public void collision() {
+        boolean isCollide = false;
+        int collidedLane = 0;
+        for (int i = 0; i < 12; i++) {
+            if ((i > 5 && i < 11) || (i >= 0 && i < 5)) {
+                for (Area a : lanes[i].getAreas()) {
+                    //if (collisionCheck(player, a) && !isCollide) {
+                    if (a.getAreaRect().contains(player.getX(),player.getY()) && !isCollide){
+                        isCollide = true;
+                        collidedLane = i;
+                        //System.out.println(a.getAx());
+                        //System.out.println("collision");
+                    }
+                }
+            }
+        }
+        if (player.getLanePos() < 7) {
+            if (isCollide) {
+                player.death();
+            }
+        }
+        if (player.getLanePos() > 7) {
+            if (isCollide) {
+                int counter = 0;
+                for (Rectangle w : winAreas){
+                    if (w.contains(player.getX(),player.getY())){
+                        System.out.println("winner");
+                        player.win(counter);
+                    }
+                    counter ++;
+                }
+                if (lanes[collidedLane].getDirection().equals("LEFT")) {
+                    player.moveX(-1/*(lanes[i].getSpeed()*/);
+                }
+                if (lanes[collidedLane].getDirection().equals("RIGHT")) {
+                    player.moveX(1/*lanes[i].getSpeed()*/);
+                }
+            }
+        }
+        //System.out.println(player.getLanePos());
+        if (player.getLanePos() > 7) {
+            if (!isCollide) {
+                int counter = 0;
+                for (Rectangle w : winAreas){
+                    if (w.contains(player.getX(),player.getY())){
+                        System.out.println("winner");
+                        player.win(counter);
+                    }
+                    counter ++;
+                }
+                player.death();
+            }
         }
     }
 
-    public void move() {
-        if (click) {
-            if (keys[KeyEvent.VK_RIGHT]) {
-                System.out.println("gayfef");
-                System.out.println("Right");
-                player.moveRight();
-            }
-
-            if (keys[KeyEvent.VK_LEFT]) {
-                System.out.println("Left");
-                player.moveLeft();
-            }
-            if (keys[KeyEvent.VK_UP]) {
-                System.out.println("Up");
-                player.moveUp();
-            }
-            if (keys[KeyEvent.VK_DOWN]) {
-                System.out.println("Down");
-                player.moveDown();
-            }
-        }
-        player.checkBound();
-    }
     @Override
-    public void paintComponent(Graphics g){
+    public void paint(Graphics g){
         g.setColor(new Color(255,222,222));
         g.drawImage(back,0,0,this);
-        g.drawImage(frogPic,player.getPosX(),player.getPosY(),this);
-        //for (Lanes l : lanes){
         for (int i = 0; i<12;i++){
-            g.setColor(new Color(255,222,222));
-            // g.drawRect(0,lanes[i].getYPos(),800,751); draw the lanes
-            for (Area a : lanes[i].getAreas()){ //start at 6
-                //System.out.println(a);
-                if (i>=6 && i < 11) { /// lanes on the road
-                    g.drawImage(obstaclePics[randint(0,2)], a.getAx(), a.getAy() + 5, this); /// put pictures into Lanes class
-                }
-                if (i>=0 && i<5){
-                    g.drawImage(log1, a.getAx(),a.getAy(),this);
+            if ((i>5 && i<11) || (i>=0 && i<5) ) {
+                g.setColor(new Color(255, 222, 222));
+                //g.drawRect(0,lanes[i].getYPos(),800,751);
+                for (Area a : lanes[i].getAreas()) { //start at 6
+                    //System.out.println(a);
+                    if ((i >5 && i < 11) || (i >= 0 && i < 5)) {
+                        //g.drawRect(a.getAx(),a.getAy(),a.getWidth(),a.getHeight());
+                        g.drawRect((int)a.getAreaRect().getX(),(int)a.getAreaRect().getY(),(int)a.getAreaRect().getWidth(),(int)a.getAreaRect().getHeight());
+                        g.drawImage(a.getPicture(), a.getAx(), a.getAy(), this);
+                    }
                 }
             }
-
         }
+        /*
+        for (Rectangle w : winAreas){
+            g.setColor( new Color(15, 10, 255));
+            g.drawRect(w.x,w.y,w.width,w.height);
+        }
+*/
+        int winCounter = 0;
+        for (int num : player.getWinSpots()){
+            if (num == 1){
+                g.drawImage (winFrogPic,winAreas[winCounter].x,winAreas[winCounter].y,this);
+            }
+            winCounter ++;
+        }
+
+        g.drawImage(frogPic,player.getX()-25,player.getY()-25,this);
+        g.drawRect(player.getX(),player.getY(),2,2);
 
     }
 
@@ -169,7 +240,6 @@ class GamePanel extends JPanel implements KeyListener {
     public void keyPressed(KeyEvent k) {
         keys[k.getKeyCode()]=true;
         click=true;
-
     }
 
     @Override
