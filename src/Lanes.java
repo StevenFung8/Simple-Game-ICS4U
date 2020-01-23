@@ -48,7 +48,7 @@ class Lanes {
             for (int i = 0; i < areas.length ; i++) {
                 counter++;
                 Image newPics = obstaclePics[randint(3,5)];
-                Area newAreas = new Area(i * randint(1,3) * 100 + newPics.getWidth(null)  , yPos +8 ,  newPics.getHeight(null), newPics.getWidth(null), newPics);
+                Area newAreas = new Area(i * randint(1,3) * 100 + newPics.getWidth(null)  , yPos +10 ,  newPics.getHeight(null), newPics.getWidth(null), newPics);
                 areas[counter - 1] = newAreas;
             }
 

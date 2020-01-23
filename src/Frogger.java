@@ -1,26 +1,32 @@
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.*;
+import java.awt.image.AffineTransformOp;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import javax.imageio.ImageIO;
+import javax.imageio.*;
 import javax.swing.*;
 import javax.swing.Timer;
 
 public class Frogger extends JFrame{
     Timer myTimer;
     GamePanel game;
+    private int width=756;
+    private int height=810;
+    private int timePassed=0;
+    private int frames=53;
 
     public Frogger() {
         super("Frogger Dylan & Steven ltd copyright");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(810,795);
+        setSize(width,height);
 
         myTimer = new Timer(10, new TickListener());
         myTimer.start();
 
         game = new GamePanel();
         add(game);
-
 
         setResizable(false);
         setVisible(true);
@@ -31,9 +37,17 @@ public class Frogger extends JFrame{
             if(game!= null && game.ready){
                 game.laneMovement();
                 game.move();
+
                 game.collision();
                 game.repaint();
-                game.setClick();
+                timePassed+=10;
+                if (timePassed==1000){
+                    game.decreaseTime();
+                    timePassed=0;
+                }
+
+
+
             }
         }
     }
@@ -47,80 +61,75 @@ public class Frogger extends JFrame{
 class GamePanel extends JPanel implements KeyListener {
     Frog player = new Frog();
     public boolean ready=false;
+    private boolean clickUp,clickDown,clickLeft,clickRight = true;
     private boolean gotName=false;
     private boolean []keys;
-    private boolean [] keysPressed ;
-    private static Image back,frogPic,winFrogPic,heart;
-    private static Lanes lanes[] = new Lanes [12];
-    private static Rectangle winAreas[] = {new Rectangle(25,25,70,70),new Rectangle(195,25,70,70),new Rectangle(370,25,70,70),new Rectangle(540,25,70,70),new Rectangle(713,25,70,70)};
-    private boolean click;
+    private Font froggerFont;
+    private int score=0;
+    private int totalMove=700;
+    private int time=30;
+    private int frames=53;
+    private int lives=3;
+
+    private static Image back,winFrogPic,heart;
+        private static Lanes lanes[] = new Lanes [12];
+    private static Rectangle winAreas[] = {new Rectangle(20,25,70,60),new Rectangle(180,25,70,60),new Rectangle(345,25,70,60),new Rectangle(505,25,70,60),new Rectangle(665,25,70,60)};
+
 
     public GamePanel(){
+        keys = new boolean[KeyEvent.KEY_LAST+1];
+        try {
+            // Loading font
+            froggerFont = Font.createFont(Font.TRUETYPE_FONT, new File("Fonts/froggerFont.ttf"));
+            froggerFont= froggerFont.deriveFont(20f);
 
+        } catch (IOException | FontFormatException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
         try {
             back = ImageIO.read(new File("Pictures/froggerBackground.png"));
-            frogPic = ImageIO.read(new File("Pictures/frogger.png"));
+
             winFrogPic = ImageIO.read(new File("Pictures/winFrog.png"));
             heart = ImageIO.read(new File("Pictures/heart.png"));
         }
         catch (IOException e) {
             System.out.println(e);
         }
-
-        keys = new boolean[KeyEvent.KEY_LAST+1];
         addKeyListener(this);
         loadLanes();
 
-
     }
-    public void setClick(){
-        click=false;
+    public void decreaseTime(){
+        time--;
     }
-
-    public void move() {
-        if (click) {
-            if (keys[KeyEvent.VK_RIGHT]) {
-                player.moveRight();
-            }
-
-            if (keys[KeyEvent.VK_LEFT]) {
-                player.moveLeft();
-            }
-            if (keys[KeyEvent.VK_UP]) {
-                player.moveUp();
-            }
-            if (keys[KeyEvent.VK_DOWN]) {
-                player.moveDown();
+    public void decraseFrames(){
+        frames--;
+    }
+    public static void movement(){
+        for (int i = 0; i<12;i++){
+            if ((i>5 && i<11) || (i>=0 && i<5) ) {
+                lanes[i].moveLanes();
             }
         }
-        player.checkBound();
-    }
-
-    public void addNotify() {
-        super.addNotify();
-        requestFocus();
-        ready = true;
-    }
-    public int randint(int low, int high){
-        return (int)(Math.random()*(high-low+1)+low);
     }
     public static void loadLanes(){
         for (int i = 0; i<12 ; i ++){
             Lanes makeLanes = null;
             if (i%2 == 1) {
                 if (i>5 && i<11){
-                    makeLanes = new Lanes(90 + 55 * i, 1, "RIGHT","road");
+                    makeLanes = new Lanes(70 + 53 * i, 1, "RIGHT","road");
                 }
                 if (i>=0 && i<5){
-                    makeLanes = new Lanes(90 + 55 * i, 1, "RIGHT","water");
+                    makeLanes = new Lanes(75 + 53 * i, 1, "RIGHT","water");
                 }
             }
             else{
                 if (i>5 && i<11){
-                    makeLanes = new Lanes(90 + 55 * i, 1, "LEFT","road");
+                    makeLanes = new Lanes(70 + 53 * i, 1, "LEFT","road");
                 }
                 if (i>=0 && i< 5){
-                    makeLanes = new Lanes(90 + 55 * i, 1, "LEFT","water");
+                    makeLanes = new Lanes(75 + 53 * i, 1, "LEFT","water");
                 }
             }
             lanes[i] = makeLanes;
@@ -147,7 +156,7 @@ class GamePanel extends JPanel implements KeyListener {
             if ((i > 5 && i < 11) || (i >= 0 && i < 5)) {
                 for (Area a : lanes[i].getAreas()) {
                     //if (collisionCheck(player, a) && !isCollide) {
-                    if (a.getAreaRect().contains(player.getX(),player.getY()) && !isCollide){
+                    if (a.getAreaRect().contains(player.getX(), player.getY()) && !isCollide) {
                         isCollide = true;
                         collidedLane = i;
                         //System.out.println(a.getAx());
@@ -164,12 +173,12 @@ class GamePanel extends JPanel implements KeyListener {
         if (player.getLanePos() > 7) {
             if (isCollide) {
                 int counter = 0;
-                for (Rectangle w : winAreas){
-                    if (w.contains(player.getX(),player.getY())){
+                for (Rectangle w : winAreas) {
+                    if (w.contains(player.getX(), player.getY())) {
                         System.out.println("winner");
                         player.win(counter);
                     }
-                    counter ++;
+                    counter++;
                 }
                 if (lanes[collidedLane].getDirection().equals("LEFT")) {
                     player.moveX(-1/*(lanes[i].getSpeed()*/);
@@ -183,68 +192,137 @@ class GamePanel extends JPanel implements KeyListener {
         if (player.getLanePos() > 7) {
             if (!isCollide) {
                 int counter = 0;
-                for (Rectangle w : winAreas){
-                    if (w.contains(player.getX(),player.getY())){
+                for (Rectangle w : winAreas) {
+                    if (w.contains(player.getX(), player.getY())) {
                         System.out.println("winner");
                         player.win(counter);
                     }
-                    counter ++;
+                    counter++;
                 }
                 player.death();
             }
         }
     }
+    public void addNotify() {
+        super.addNotify();
+        requestFocus();
+        ready = true;
+    }
 
+    public void move() {
+
+                if (keys[KeyEvent.VK_RIGHT] && clickRight) {
+                    player.setRotation(Math.toRadians(90));
+                    player.moveRight();
+
+                    clickRight=false;
+
+
+                }
+                if (keys[KeyEvent.VK_LEFT] && clickLeft) {
+                    player.setRotation(Math.toRadians(270));
+                    player.moveLeft();
+                    clickLeft=false;
+
+
+                }
+                if (keys[KeyEvent.VK_UP] && clickUp) {
+                    player.setRotation(Math.toRadians(0));
+                    player.moveUp();
+                    if (player.getY()<totalMove){
+                        totalMove-=53;
+                        score+=10;
+                        System.out.println("score= " + score);
+                        System.out.println(totalMove);
+                    }
+                    if (totalMove<=40){
+                        totalMove=700;
+                    }
+                    clickUp=false;
+
+
+                }
+                if (keys[KeyEvent.VK_DOWN] && clickDown) {
+                    player.setRotation(Math.toRadians(180));
+                    player.moveDown();
+                    clickDown=false;
+
+
+                }
+
+        player.checkBound();
+    }
     @Override
-    public void paint(Graphics g){
-        g.setColor(new Color(255,222,222));
-        g.drawImage(back,0,0,this);
-        for (int i = 0; i<12;i++){
-            if ((i>5 && i<11) || (i>=0 && i<5) ) {
+    public void paintComponent(Graphics g) {
+        g.setColor(new Color(0, 0, 0));
+        g.fillRect(0, 0, 756, 810);
+        g.setColor(new Color(255, 222, 222));
+        g.drawImage(back, 0, 0, this);
+        Graphics2D g2D = (Graphics2D) g;
+        AffineTransform rot = new AffineTransform();
+        rot.rotate(player.getRot(), 25, 25);
+        AffineTransformOp rotOp = new AffineTransformOp(rot, AffineTransformOp.TYPE_BILINEAR);
+
+        for (int i = 0; i < 12; i++) {
+            if ((i > 5 && i < 11) || (i >= 0 && i < 5)) {
                 g.setColor(new Color(255, 222, 222));
                 //g.drawRect(0,lanes[i].getYPos(),800,751);
                 for (Area a : lanes[i].getAreas()) { //start at 6
                     //System.out.println(a);
-                    if ((i >5 && i < 11) || (i >= 0 && i < 5)) {
+                    if ((i > 5 && i < 11) || (i >= 0 && i < 5)) {
                         //g.drawRect(a.getAx(),a.getAy(),a.getWidth(),a.getHeight());
-                        g.drawRect((int)a.getAreaRect().getX(),(int)a.getAreaRect().getY(),(int)a.getAreaRect().getWidth(),(int)a.getAreaRect().getHeight());
+                        g.drawRect((int) a.getAreaRect().getX(), (int) a.getAreaRect().getY(), (int) a.getAreaRect().getWidth(), (int) a.getAreaRect().getHeight());
                         g.drawImage(a.getPicture(), a.getAx(), a.getAy(), this);
                     }
                 }
             }
         }
-        /*
+        g.getFont();
+
+        for(int i = player.getLives(); i>0; i--){
+            g.drawImage(heart,200 + 50*i,715,this);
+        }
+        g2D.setFont(froggerFont);
+        g2D.drawString("Score: " + score, 20, 750);
+        g2D.drawString("Time: " + time, 500, 750);
+
+
+
         for (Rectangle w : winAreas){
             g.setColor( new Color(15, 10, 255));
             g.drawRect(w.x,w.y,w.width,w.height);
         }
-*/
+
         int winCounter = 0;
-        for (int num : player.getWinSpots()){
-            if (num == 1){
-                g.drawImage (winFrogPic,winAreas[winCounter].x,winAreas[winCounter].y,this);
+        for (int num : player.getWinSpots()) {
+            if (num == 1) {
+                g.drawImage(winFrogPic, winAreas[winCounter].x, winAreas[winCounter].y, this);
+                score+=100;
             }
-            winCounter ++;
+            winCounter++;
         }
-
-        g.drawImage(frogPic,player.getX()-25,player.getY()-25,this);
         g.drawRect(player.getX(),player.getY(),2,2);
-
+        g.fillRect(500, 750, time * 5, 15);
+        g2D.drawImage((BufferedImage) player.getImage(), rotOp, player.getX()-25, player.getY()-25);
     }
 
     @Override
     public void keyTyped(KeyEvent keyEvent) {}
 
 
+
     @Override
     public void keyPressed(KeyEvent k) {
         keys[k.getKeyCode()]=true;
-        click=true;
+        move();
     }
 
     @Override
     public void keyReleased(KeyEvent k) {
         keys[k.getKeyCode()]=false;
-        click=false;
+        if (keys[k.getKeyCode()]==keys[KeyEvent.VK_LEFT]) { clickLeft = true; }
+        if (keys[k.getKeyCode()]==keys[KeyEvent.VK_RIGHT]) { clickRight = true; }
+        if (keys[k.getKeyCode()]==keys[KeyEvent.VK_UP]) { clickUp = true; }
+        if (keys[k.getKeyCode()]==keys[KeyEvent.VK_DOWN]) { clickDown = true; }
     }
 }
