@@ -31,13 +31,15 @@ public class Frogger extends JFrame{
         setResizable(false);
         setVisible(true);
     }
-
+    public GamePanel getGamePanel(){
+        return game;
+    }
     class TickListener implements ActionListener{ //CALL FUNCTIONS HERE (JUST LIKE PYGAME "WHILE RUNNING LOOP")
         public void actionPerformed(ActionEvent evt){
             if(game!= null && game.ready){
                 game.laneMovement();
                 game.move();
-
+                game.player.minuesqMoves();
                 game.collision();
                 game.repaint();
                 timePassed+=10;
@@ -56,6 +58,7 @@ public class Frogger extends JFrame{
         Frogger frame = new Frogger();
 
     }
+
 }
 
 class GamePanel extends JPanel implements KeyListener {
@@ -210,47 +213,48 @@ class GamePanel extends JPanel implements KeyListener {
     }
 
     public void move() {
+        if (player.getqMoves() == 0) {
+            if (keys[KeyEvent.VK_RIGHT] && clickRight) {
+                player.setRotation(Math.toRadians(90));
+                player.moveRight();
 
-                if (keys[KeyEvent.VK_RIGHT] && clickRight) {
-                    player.setRotation(Math.toRadians(90));
-                    player.moveRight();
-
-                    clickRight=false;
+                clickRight = false;
 
 
+            }
+            if (keys[KeyEvent.VK_LEFT] && clickLeft) {
+                player.setRotation(Math.toRadians(270));
+                player.moveLeft();
+                clickLeft = false;
+
+
+            }
+            if (keys[KeyEvent.VK_UP] && clickUp) {
+                player.setRotation(Math.toRadians(0));
+                player.moveUp();
+                if (player.getY() < totalMove) {
+                    totalMove -= 53;
+                    score += 10;
+                    System.out.println("score= " + score);
+                    System.out.println(totalMove);
                 }
-                if (keys[KeyEvent.VK_LEFT] && clickLeft) {
-                    player.setRotation(Math.toRadians(270));
-                    player.moveLeft();
-                    clickLeft=false;
-
-
+                if (totalMove <= 40) {
+                    totalMove = 700;
                 }
-                if (keys[KeyEvent.VK_UP] && clickUp) {
-                    player.setRotation(Math.toRadians(0));
-                    player.moveUp();
-                    if (player.getY()<totalMove){
-                        totalMove-=53;
-                        score+=10;
-                        System.out.println("score= " + score);
-                        System.out.println(totalMove);
-                    }
-                    if (totalMove<=40){
-                        totalMove=700;
-                    }
-                    clickUp=false;
+                clickUp = false;
 
 
-                }
-                if (keys[KeyEvent.VK_DOWN] && clickDown) {
-                    player.setRotation(Math.toRadians(180));
-                    player.moveDown();
-                    clickDown=false;
+            }
+            if (keys[KeyEvent.VK_DOWN] && clickDown) {
+                player.setRotation(Math.toRadians(180));
+                player.moveDown();
+                clickDown = false;
 
 
-                }
+            }
 
-        player.checkBound();
+            player.checkBound();
+        }
     }
     @Override
     public void paintComponent(Graphics g) {
@@ -266,11 +270,11 @@ class GamePanel extends JPanel implements KeyListener {
         for (int i = 0; i < 12; i++) {
             if ((i > 5 && i < 11) || (i >= 0 && i < 5)) {
                 g.setColor(new Color(255, 222, 222));
-                //g.drawRect(0,lanes[i].getYPos(),800,751);
+                g.drawRect(0,lanes[i].getYPos(),800,751);
                 for (Area a : lanes[i].getAreas()) { //start at 6
                     //System.out.println(a);
                     if ((i > 5 && i < 11) || (i >= 0 && i < 5)) {
-                        //g.drawRect(a.getAx(),a.getAy(),a.getWidth(),a.getHeight());
+                        g.drawRect(a.getAx(),a.getAy(),a.getWidth(),a.getHeight());
                         g.drawRect((int) a.getAreaRect().getX(), (int) a.getAreaRect().getY(), (int) a.getAreaRect().getWidth(), (int) a.getAreaRect().getHeight());
                         g.drawImage(a.getPicture(), a.getAx(), a.getAy(), this);
                     }

@@ -17,9 +17,11 @@ class Frog {
     private Image  currentFrogPic;
     private int frames=53;
     private int qMoves=0;
+    private int frameCount=0;
+    private String direction;
     public Frog(){
         posX = 378;
-        posY = 690+20;
+        posY = 690;
         lanePos = 1;
         lives = 3;
         try {
@@ -40,11 +42,11 @@ class Frog {
         if (posX<=0){
             death();
         }
-        if (posY>=700){
-            posY=700;
+        if (posY>=690){
+            posY=690;
         }
         if (posY<=40){
-            posY = 690+20;
+            posY = 690;
             posX=378-25;
 
         }
@@ -52,8 +54,10 @@ class Frog {
     }
     public void win(int index) {
         posX = 378;
-        posY = 690+20;
+        posY = 690;
+        qMoves=0;
         lanePos = 1;
+        lives++;
         if (winSpots[index] == 0) {
             winSpots[index] = 1;
         } else {
@@ -62,7 +66,8 @@ class Frog {
     }
     public void death(){
         posX = 378;
-        posY = 690+20;
+        posY = 690;
+        qMoves=0;
         lanePos = 1;
         lives --;
         System.out.println(lives);
@@ -79,32 +84,68 @@ class Frog {
     public double getRot(){return rotation;}
     public void setRotation(double r ){rotation=r;}
     public int getLives(){return lives;}
-    public Image getImage(){return currentFrogPic;}
+    public Image getImage() {
+        if (qMoves > 10) {//delay so can't spam moves
+            return frogPic2;
+        } else {
+            return frogPic;
+        }
+    }
+    public int getqMoves(){return qMoves;}
     public int getLanePos() { return lanePos;}
     public int [] getWinSpots(){ return winSpots;}
     public void moveX(int value){
         posX += value;
     }
-    public void moveY(int value){
-        posY += value;
+    public void minuesqMoves() {
+        System.out.println(qMoves);
+        System.out.println("x" + posX + "y" + posY);
+
+        if (qMoves > 10) {
+            qMoves--;
+            if (direction.equals("up")) {
+                posY -= 1;
+            }
+            if (direction.equals("down")) {
+                posY += 1;
+            }
+            if (direction.equals("left")) {
+                posX -= 1;
+            }
+            if (direction.equals("right")) {
+                posX += 1;
+            }
+        } else {
+            qMoves = 0;
+        }
+
+
     }
     public void moveUp(){
-        while(frames>0) {
-            posY -= 53;
-            currentFrogPic=frogPic2;
-        }
-        currentFrogPic=frogPic;
-        frames=53;
+        qMoves=63;
         lanePos ++;
+        direction="up";
     }
+
+
+
+
     public void moveDown() {
-        posY += 53;
+        qMoves=63;
         lanePos--;
         if (lanePos < 1) {
             lanePos = 1;
         }
+        direction="down";
     }
-    public void moveRight(){posX +=53 ;}
-    public void moveLeft(){posX -=53 ;}
+    public void moveRight(){
+        qMoves=63;
+        direction="right";
+    }
+    public void moveLeft(){
+        qMoves=63;
+        direction="left";
+    }
     public void decreaseFrames(){frames--;}
+
 }
