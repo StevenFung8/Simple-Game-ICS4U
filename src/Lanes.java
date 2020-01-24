@@ -33,7 +33,6 @@ class Lanes {
             for (int i = 0; i< areas.length ; i++) {
                 counter++;
                 Area newAreas = null;
-
                 if (direction == "RIGHT") { // i * randint(1,3) * 100 + obstaclePics[0].getWidth(null)
                     newAreas = new Area(i * randint(1,3) * 100 + obstaclePics[0].getWidth(null), yPos + 2, 50, 50, obstaclePics[0]);
                 }
@@ -67,12 +66,14 @@ class Lanes {
     public String getLocation() { return location; }
     public String getDirection(){ return direction;}
     public int getSpeed(){ return speed;}
-
+    public void changeSpeed(int value){
+        speed += value;
+    }
 public void moveLanes() {
     for (Area a : areas) {
         if (direction == "LEFT") {
             a.setAx(a.getAx() - speed);
-            a.getAreaRect().x -=1;
+            a.getAreaRect().x -= speed;
             if (a.getAx() <= -(a.getPicture().getWidth(null) + 50)) {
                 a.setAx(850 + a.getPicture().getWidth(null));
                 a.getAreaRect().x = 850 + a.getPicture().getWidth(null);
@@ -80,7 +81,7 @@ public void moveLanes() {
         }
         if (direction == "RIGHT") {
             a.setAx(a.getAx() + speed);
-            a.getAreaRect().x +=1;
+            a.getAreaRect().x += speed;
             if (a.getAx() >= 850 + a.getPicture().getWidth(null)) {
                 a.setAx(-(a.getPicture().getWidth(null) + 50));
                 a.getAreaRect().x = -(50 + a.getPicture().getWidth(null));

@@ -40,18 +40,16 @@ public class Frogger extends JFrame{
                 game.laneMovement();
                 game.move();
                 game.player.minuesqMoves();
+                game.player.minusDeath();
                 game.collision();
                 game.repaint();
-                game.player.minusDeath();
-
                 timePassed+=10;
                 if (timePassed==1000){
                     game.decreaseTime();
                     timePassed=0;
                 }
-
-
-
+                game.checkLevel();
+                game.checkBound();
             }
         }
     }
@@ -73,8 +71,9 @@ class MainGame extends JPanel implements KeyListener {
     private int score=0;
     private int totalMove=700;
     private int time=30;
-
-
+    private int frames=53;
+    private int lives=3;
+    int currentLevel = 1;
     private static Image back,winFrogPic,heart;
     private static Lanes lanes[] = new Lanes [12];
     private static Rectangle winAreas[] = {new Rectangle(20,25,70,60),new Rectangle(180,25,70,60),new Rectangle(345,25,70,60),new Rectangle(505,25,70,60),new Rectangle(665,25,70,60)};
@@ -93,7 +92,6 @@ class MainGame extends JPanel implements KeyListener {
         }
         try {
             back = ImageIO.read(new File("Pictures/froggerBackground.png"));
-
             winFrogPic = ImageIO.read(new File("Pictures/winFrog.png"));
             heart = ImageIO.read(new File("Pictures/heart.png"));
         }
@@ -117,10 +115,10 @@ class MainGame extends JPanel implements KeyListener {
             Lanes makeLanes = null;
             if (i%2 == 1) {
                 if (i>5 && i<11){
-                    makeLanes = new Lanes(83 + 53 * i, player.getLevel(), "RIGHT","road");
+                    makeLanes = new Lanes(83 + 53 * i, 1, "RIGHT","road");
                 }
                 if (i>=0 && i<5){
-                    makeLanes = new Lanes(83 + 53 * i, player.getLevel(), "RIGHT","water");
+                    makeLanes = new Lanes(83 + 53 * i, 1, "RIGHT","water");
                 }
             }
             else{
@@ -128,7 +126,7 @@ class MainGame extends JPanel implements KeyListener {
                     makeLanes = new Lanes(83 + 53 * i, 1, "LEFT","road");
                 }
                 if (i>=0 && i< 5){
-                    makeLanes = new Lanes(83 + 53 * i, 1, "LEFT","water");
+                    makeLanes = new Lanes(83 + 53 * i, 1 , "LEFT","water");
                 }
             }
             lanes[i] = makeLanes;
@@ -142,6 +140,31 @@ class MainGame extends JPanel implements KeyListener {
             }
         }
     }
+    public void checkBound(){
+        if (player.getX()>=800){
+            if(player.getDeathFrames() == 0) {
+                player.death();
+                time = 30;
+            }
+            System.out.println("die");
+        }
+        if (player.getX()<=0){
+            if(player.getDeathFrames() == 0) {
+                player.death();
+                time =30;
+            }
+            System.out.println("die");
+        }
+        if (player.getY()>=690 && player.getFinalY()>=690){
+            player.changeY(690);
+            player.changeFinalY(690);
+        }
+        if (player.getY()<=40 && player.getFinalY() <= 40){
+            player.changeY(690);
+            player.changeFinalY(690);
+        }
+
+    }
     public void collision() {
         boolean isCollide = false;
         int collidedLane = 0;
@@ -152,7 +175,6 @@ class MainGame extends JPanel implements KeyListener {
                     if (a.getAreaRect().contains(player.getX(), player.getFinalY()) && !isCollide) {
                         isCollide = true;
                         collidedLane = i;
-                        System.out.println("collision");
                     }
                 }
             }
@@ -186,7 +208,6 @@ class MainGame extends JPanel implements KeyListener {
                 }
             }
         }
-        //System.out.println(player.getLanePos());
         if (player.getLanePos() > 7) {
             if (!isCollide) {
                 int counter = 0;
@@ -200,6 +221,19 @@ class MainGame extends JPanel implements KeyListener {
                     counter++;
                 }
                 player.death();
+            }
+        }
+    }
+    public void checkLevel(){
+        if (player.getLevel() > currentLevel){
+            speedUp();
+            currentLevel ++;
+        }
+    }
+    public void speedUp(){
+        for (int i = 0; i < 12; i++) {
+            if ((i > 5 && i < 11) || (i >= 0 && i < 5)) {
+                lanes[i].changeSpeed(1);
             }
         }
     }
@@ -232,8 +266,6 @@ class MainGame extends JPanel implements KeyListener {
                 if (player.getY() < totalMove) {
                     totalMove -= 53;
                     score += 10;
-                    //System.out.println("score= " + score);
-                    //System.out.println(totalMove);
                 }
                 if (totalMove <= 40) {
                     totalMove = 700;
@@ -250,7 +282,7 @@ class MainGame extends JPanel implements KeyListener {
 
             }
 
-            player.checkBound();
+            //player.checkBound();
         }
     }
     @Override
@@ -271,8 +303,8 @@ class MainGame extends JPanel implements KeyListener {
                 for (Area a : lanes[i].getAreas()) { //start at 6
                     //System.out.println(a);
                     if ((i > 5 && i < 11) || (i >= 0 && i < 5)) {
-                        // g.drawRect(a.getAx(),a.getAy(),a.getWidth(),a.getHeight());
-                        //g.drawRect((int) a.getAreaRect().getX(), (int) a.getAreaRect().getY(), (int) a.getAreaRect().getWidth(), (int) a.getAreaRect().getHeight());
+                        g.drawRect(a.getAx(),a.getAy(),a.getWidth(),a.getHeight());
+                        g.drawRect((int) a.getAreaRect().getX(), (int) a.getAreaRect().getY(), (int) a.getAreaRect().getWidth(), (int) a.getAreaRect().getHeight());
                         g.drawImage(a.getPicture(), a.getAx(), a.getAy(), this);
                     }
                 }
@@ -305,9 +337,6 @@ class MainGame extends JPanel implements KeyListener {
         }
         g.fillRect(500, 750, time * 5, 15);
         g2D.drawImage((BufferedImage) player.getImage(), rotOp, player.getX()-25, player.getY()-25);
-        g.drawRect(player.getX(),player.getY(),2,2);
-        g.setColor(new Color (241,255, 15));
-        g.drawRect(player.getX(),player.getFinalY(),2,2);
     }
 
     @Override
