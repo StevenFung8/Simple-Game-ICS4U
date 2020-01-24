@@ -46,13 +46,18 @@ class Frog {
         frogPics[1]=frogPic2;
         currentFrogPic=frogPics[0];
     }
+    /*
     public void checkBound(){
         if (posX>=775){
-            death();
+            if(deathFrames == 0) {
+                death();
+            }
             System.out.println("die");
         }
         if (posX<=25){
-            death();
+            if(deathFrames == 0) {
+                death();
+            }
             System.out.println("die");
         }
         if (posY>=690 && posFinalY>=690){
@@ -65,6 +70,8 @@ class Frog {
         }
 
     }
+
+     */
     public void win(int index) {
         posX = 378;
         posY = 690;
@@ -93,9 +100,9 @@ class Frog {
         deathFrames=140;
         lanePos = 1;
 
-        //System.out.println(lives);
 
         posFinalY = 690;
+        System.out.println(lives);
         if (lives == 0){
             System.exit(69420);
         }
@@ -140,6 +147,7 @@ class Frog {
             posX = 378;
             posY = 690;
         }
+        System.out.println(deathFrames);
     }
     public int getX(){
         return posX;
@@ -152,6 +160,15 @@ class Frog {
     }
     public int getLevel(){
         return level;
+    }
+    public int getDeathFrames(){
+        return deathFrames;
+    }
+    public void changeY(int value){
+        posY = value;
+    }
+    public void changeFinalY(int value){
+        posFinalY = value;
     }
     public double getRot(){return rotation;}
     public void setRotation(double r ){rotation=r;}

@@ -78,7 +78,6 @@ public void moveLanes() {
                 a.setAx(850 + a.getPicture().getWidth(null));
                 a.getAreaRect().x = 850 + a.getPicture().getWidth(null);
             }
-            System.out.println(speed);
         }
         if (direction == "RIGHT") {
             a.setAx(a.getAx() + speed);
@@ -87,7 +86,6 @@ public void moveLanes() {
                 a.setAx(-(a.getPicture().getWidth(null) + 50));
                 a.getAreaRect().x = -(50 + a.getPicture().getWidth(null));
             }
-            System.out.println(speed);
         }
     }
 }

@@ -49,6 +49,7 @@ public class Frogger extends JFrame{
                     timePassed=0;
                 }
                 game.checkLevel();
+                game.checkBound();
             }
         }
     }
@@ -138,6 +139,31 @@ class MainGame extends JPanel implements KeyListener {
                 lanes[i].moveLanes();
             }
         }
+    }
+    public void checkBound(){
+        if (player.getX()>=800){
+            if(player.getDeathFrames() == 0) {
+                player.death();
+                time = 30;
+            }
+            System.out.println("die");
+        }
+        if (player.getX()<=0){
+            if(player.getDeathFrames() == 0) {
+                player.death();
+                time =30;
+            }
+            System.out.println("die");
+        }
+        if (player.getY()>=690 && player.getFinalY()>=690){
+            player.changeY(690);
+            player.changeFinalY(690);
+        }
+        if (player.getY()<=40 && player.getFinalY() <= 40){
+            player.changeY(690);
+            player.changeFinalY(690);
+        }
+
     }
     public void collision() {
         boolean isCollide = false;
@@ -256,7 +282,7 @@ class MainGame extends JPanel implements KeyListener {
 
             }
 
-            player.checkBound();
+            //player.checkBound();
         }
     }
     @Override
