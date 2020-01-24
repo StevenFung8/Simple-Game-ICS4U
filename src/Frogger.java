@@ -92,7 +92,6 @@ class MainGame extends JPanel implements KeyListener {
         }
         try {
             back = ImageIO.read(new File("Pictures/froggerBackground.png"));
-
             winFrogPic = ImageIO.read(new File("Pictures/winFrog.png"));
             heart = ImageIO.read(new File("Pictures/heart.png"));
         }
@@ -105,17 +104,21 @@ class MainGame extends JPanel implements KeyListener {
     }
     public void decreaseTime(){
         time--;
+        if (time == 0){
+            time = 30;
+            player.death();
+        }
     }
 
-    public static void loadLanes(){
+    public void loadLanes(){
         for (int i = 0; i<12 ; i ++){
             Lanes makeLanes = null;
             if (i%2 == 1) {
                 if (i>5 && i<11){
-                    makeLanes = new Lanes(83 + 53 * i, 1, "RIGHT","road");
+                    makeLanes = new Lanes(83 + 53 * i, player.getLevel(), "RIGHT","road");
                 }
                 if (i>=0 && i<5){
-                    makeLanes = new Lanes(83 + 53 * i, 1, "RIGHT","water");
+                    makeLanes = new Lanes(83 + 53 * i, player.getLevel(), "RIGHT","water");
                 }
             }
             else{
@@ -154,6 +157,7 @@ class MainGame extends JPanel implements KeyListener {
         }
         if (player.getLanePos() < 7) {
             if (isCollide) {
+                time = 30;
                 player.death();
             }
         }
@@ -163,6 +167,7 @@ class MainGame extends JPanel implements KeyListener {
                 for (Rectangle w : winAreas) {
                     if (w.contains(player.getX(), player.getFinalY())) {
                         System.out.println("winner");
+                        time = 30;
                         player.win(counter);
                     }
                     counter++;
@@ -186,6 +191,8 @@ class MainGame extends JPanel implements KeyListener {
                 for (Rectangle w : winAreas) {
                     if (w.contains(player.getX(), player.getFinalY())) {
                         System.out.println("winner");
+                        score+=100;
+                        time = 30;
                         player.win(counter);
                     }
                     counter++;
@@ -258,12 +265,12 @@ class MainGame extends JPanel implements KeyListener {
         for (int i = 0; i < 12; i++) {
             if ((i > 5 && i < 11) || (i >= 0 && i < 5)) {
                 g.setColor(new Color(255, 222, 222));
-                g.drawRect(0,lanes[i].getYPos(),800,751);
+                //g.drawRect(0,lanes[i].getYPos(),800,751);
                 for (Area a : lanes[i].getAreas()) { //start at 6
                     //System.out.println(a);
                     if ((i > 5 && i < 11) || (i >= 0 && i < 5)) {
-                        g.drawRect(a.getAx(),a.getAy(),a.getWidth(),a.getHeight());
-                        g.drawRect((int) a.getAreaRect().getX(), (int) a.getAreaRect().getY(), (int) a.getAreaRect().getWidth(), (int) a.getAreaRect().getHeight());
+                        // g.drawRect(a.getAx(),a.getAy(),a.getWidth(),a.getHeight());
+                        //g.drawRect((int) a.getAreaRect().getX(), (int) a.getAreaRect().getY(), (int) a.getAreaRect().getWidth(), (int) a.getAreaRect().getHeight());
                         g.drawImage(a.getPicture(), a.getAx(), a.getAy(), this);
                     }
                 }
@@ -279,17 +286,18 @@ class MainGame extends JPanel implements KeyListener {
         g2D.drawString("Time: " + time, 500, 750);
 
 
-
+        /*
         for (Rectangle w : winAreas){
             g.setColor( new Color(15, 10, 255));
             g.drawRect(w.x,w.y,w.width,w.height);
         }
 
+         */
+
         int winCounter = 0;
         for (int num : player.getWinSpots()) {
             if (num == 1) {
                 g.drawImage(winFrogPic, winAreas[winCounter].x + 10, winAreas[winCounter].y + 10, this);
-                score+=100;
             }
             winCounter++;
         }

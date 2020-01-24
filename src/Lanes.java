@@ -35,11 +35,11 @@ class Lanes {
                 Area newAreas = null;
 
                 if (direction == "RIGHT") { // i * randint(1,3) * 100 + obstaclePics[0].getWidth(null)
-                    newAreas = new Area(i * randint(1,3) * 100 + obstaclePics[0].getWidth(null), yPos + 10, 50, 50, obstaclePics[0]);
+                    newAreas = new Area(i * randint(1,3) * 100 + obstaclePics[0].getWidth(null), yPos + 2, 50, 50, obstaclePics[0]);
                 }
                 else if (direction == "LEFT"){
                     Image newPics = obstaclePics[randint(1,2)];
-                    newAreas = new Area(i * randint(1,3) * 100 + newPics.getWidth(null)  , yPos + 10, 50, 50, newPics);
+                    newAreas = new Area(i * randint(1,3) * 100 + newPics.getWidth(null)  , yPos + 2, 50, 50, newPics);
                 }
                 areas[counter - 1] = newAreas;
             }
@@ -48,7 +48,7 @@ class Lanes {
             for (int i = 0; i < areas.length ; i++) {
                 counter++;
                 Image newPics = obstaclePics[randint(3,5)];
-                Area newAreas = new Area(i * randint(1,3) * 100 + newPics.getWidth(null)  , yPos +10 ,  newPics.getHeight(null), newPics.getWidth(null), newPics);
+                Area newAreas = new Area(i * randint(1,3) * 100 + newPics.getWidth(null)  , yPos +2 ,  newPics.getHeight(null), newPics.getWidth(null), newPics);
                 areas[counter - 1] = newAreas;
             }
 

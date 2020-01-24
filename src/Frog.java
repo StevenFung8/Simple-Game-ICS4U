@@ -10,7 +10,7 @@ import javax.swing.*;
 import javax.swing.Timer;
 class Frog {
     private double rotation=0;
-    private int posX,posY,posFinalY,lanePos,lives;
+    private int posX,posY,posFinalY,lanePos,lives,level;
     private int [] winSpots = {0,0,0,0,0};
     private Image[] frogPics = new Image[2];
     private Image frogPic,frogPic2;
@@ -24,6 +24,7 @@ class Frog {
         posY = 690;
         lanePos = 1;
         lives = 3;
+        level = 1;
         posFinalY = 690;
         try {
             frogPic = ImageIO.read(new File("Pictures/frogpic1.png"));
@@ -64,9 +65,19 @@ class Frog {
         posFinalY = 690;
         if (winSpots[index] == 0) {
             winSpots[index] = 1;
+            int winSpotCounter = 0;
+            for (int w : winSpots){
+                if (w == 1){
+                    winSpotCounter +=1;
+                }
+            }
+            if (winSpotCounter == 5){
+                levelUp(level+1);
+            }
         } else {
             death();
         }
+
     }
     public void death(){
         posX = 378;
@@ -80,6 +91,14 @@ class Frog {
             System.exit(0);
         }
     }
+    public void levelUp(int value){
+        level = value;
+        lives = 3;
+        for (int i = 0 ; i < 5 ; i++){
+            winSpots[i] = 0;
+        }
+
+    }
     public int getX(){
         return posX;
     }
@@ -88,6 +107,9 @@ class Frog {
     }
     public int getFinalY(){
         return posFinalY;
+    }
+    public int getLevel(){
+        return level;
     }
     public double getRot(){return rotation;}
     public void setRotation(double r ){rotation=r;}
@@ -109,19 +131,23 @@ class Frog {
         //System.out.println(qMoves);
         //System.out.println("x" + posX + "y" + posY);
 
-        if (qMoves > 8) {
-            qMoves-=3;
+        int movementAmount = 2;
+        if(qMoves == 1){
+            movementAmount = 1;
+        }
+        if (qMoves > 0) {
+            qMoves-=movementAmount;
             if (direction.equals("up")) {
-                posY -= 3;
+                posY -= movementAmount;
             }
             if (direction.equals("down")) {
-                posY += 3;
+                posY += movementAmount;
             }
             if (direction.equals("left")) {
-                posX -= 3;
+                posX -= movementAmount;
             }
             if (direction.equals("right")) {
-                posX += 3;
+                posX += movementAmount;
             }
         } else {
             qMoves = 0;
@@ -130,18 +156,18 @@ class Frog {
 
     }
     public void moveUp(){
-        qMoves=59;
-        lanePos ++;
         posFinalY -=53;
+        qMoves = 53;
+        lanePos ++;
         direction="up";
         System.out.println("up");
         System.out.println(posFinalY);
     }
 
     public void moveDown() {
-        qMoves=59;
-        lanePos--;
+        qMoves = 53;
         posFinalY +=53;
+        lanePos --;
         System.out.println(posFinalY);
         if (lanePos < 1) {
             lanePos = 1;
