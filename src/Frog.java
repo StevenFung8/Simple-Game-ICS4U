@@ -10,7 +10,7 @@ import javax.swing.*;
 import javax.swing.Timer;
 class Frog {
     private double rotation=0;
-    private int posX,posY,lanePos,lives;
+    private int posX,posY,posFinalY,lanePos,lives,level;
     private int [] winSpots = {0,0,0,0,0};
 
     private Image frogPic,frogPic2;
@@ -25,6 +25,8 @@ class Frog {
         posY = 690;
         lanePos = 1;
         lives = 3;
+        level = 1;
+        posFinalY = 690;
         try {
             frogPic = ImageIO.read(new File("Pictures/frogpic1.png"));
             frogPic2 = ImageIO.read(new File("Pictures/frogpic2.png"));
@@ -51,11 +53,13 @@ class Frog {
         if (posX<=0){
             death();
         }
-        if (posY>=690){
+        if (posY>=690 && posFinalY>=690){
             posY=690;
+            posFinalY = 690;
         }
-        if (posY<=40){
+        if (posY<=40 && posFinalY <= 40){
             posY = 690;
+            posFinalY = 690;
             posX=378-25;
 
         }
@@ -67,11 +71,22 @@ class Frog {
         qMoves=0;
         lanePos = 1;
         lives++;
+        posFinalY = 690;
         if (winSpots[index] == 0) {
             winSpots[index] = 1;
+            int winSpotCounter = 0;
+            for (int w : winSpots){
+                if (w == 1){
+                    winSpotCounter +=1;
+                }
+            }
+            if (winSpotCounter == 5){
+                levelUp(level+1);
+            }
         } else {
             death();
         }
+
     }
     public void death(){
 
@@ -80,17 +95,32 @@ class Frog {
         lanePos = 1;
 
         //System.out.println(lives);
+
+        posFinalY = 690;
+        System.out.println(lives);
         if (lives == 0){
             System.exit(69420);
         }
+    }
+    public void levelUp(int value){
+        level = value;
+        lives = 3;
+        for (int i = 0 ; i < 5 ; i++){
+            winSpots[i] = 0;
+        }
 
     }
-
     public int getX(){
         return posX;
     }
     public int getY(){
         return posY;
+    }
+    public int getFinalY(){
+        return posFinalY;
+    }
+    public int getLevel(){
+        return level;
     }
     public double getRot(){return rotation;}
     public void setRotation(double r ){rotation=r;}
@@ -102,7 +132,6 @@ class Frog {
         }else{
             return currentFrogPic;
         }
-
     }
     public int getqMoves(){return qMoves;}
     public int getLanePos() { return lanePos;}
@@ -152,20 +181,26 @@ class Frog {
     public void minuesqMoves() {
 //        System.out.println(qMoves);
 //        System.out.println("x" + posX + "y" + posY);
+        //System.out.println(qMoves);
+        //System.out.println("x" + posX + "y" + posY);
 
-        if (qMoves >= 8) {
-            qMoves-=2;
+        int movementAmount = 2;
+        if(qMoves == 1){
+            movementAmount = 1;
+        }
+        if (qMoves > 0) {
+            qMoves-=movementAmount;
             if (direction.equals("up")) {
-                posY -= 2;
+                posY -= movementAmount;
             }
             if (direction.equals("down")) {
-                posY += 2;
+                posY += movementAmount;
             }
             if (direction.equals("left")) {
-                posX -= 2;
+                posX -= movementAmount;
             }
             if (direction.equals("right")) {
-                posX += 2;
+                posX += movementAmount;
             }
         } else {
             qMoves = 0;
@@ -174,17 +209,22 @@ class Frog {
 
     }
     public void moveUp(){
-        qMoves=63;
+        posFinalY -=53;
+        qMoves = 53;
         lanePos ++;
         direction="up";
+        System.out.println("up");
+        System.out.println(posFinalY);
     }
 
 
 
 
     public void moveDown() {
-        qMoves=63;
-        lanePos--;
+        qMoves = 53;
+        posFinalY +=53;
+        lanePos --;
+        System.out.println(posFinalY);
         if (lanePos < 1) {
             lanePos = 1;
         }
