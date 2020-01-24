@@ -71,7 +71,7 @@ public void moveLanes() {
     for (Area a : areas) {
         if (direction == "LEFT") {
             a.setAx(a.getAx() - speed);
-            a.getAreaRect().x -=1;
+            a.getAreaRect().x -= speed;
             if (a.getAx() <= -(a.getPicture().getWidth(null) + 50)) {
                 a.setAx(850 + a.getPicture().getWidth(null));
                 a.getAreaRect().x = 850 + a.getPicture().getWidth(null);
@@ -79,7 +79,7 @@ public void moveLanes() {
         }
         if (direction == "RIGHT") {
             a.setAx(a.getAx() + speed);
-            a.getAreaRect().x +=1;
+            a.getAreaRect().x += speed;
             if (a.getAx() >= 850 + a.getPicture().getWidth(null)) {
                 a.setAx(-(a.getPicture().getWidth(null) + 50));
                 a.getAreaRect().x = -(50 + a.getPicture().getWidth(null));

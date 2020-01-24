@@ -40,6 +40,7 @@ public class Frogger extends JFrame{
                 game.laneMovement();
                 game.move();
                 game.player.minuesqMoves();
+                game.player.minusDeath();
                 game.collision();
                 game.repaint();
                 timePassed+=10;
@@ -115,18 +116,18 @@ class MainGame extends JPanel implements KeyListener {
             Lanes makeLanes = null;
             if (i%2 == 1) {
                 if (i>5 && i<11){
-                    makeLanes = new Lanes(83 + 53 * i, 2* player.getLevel(), "RIGHT","road");
+                    makeLanes = new Lanes(83 + 53 * i, player.getLevel(), "RIGHT","road");
                 }
                 if (i>=0 && i<5){
-                    makeLanes = new Lanes(83 + 53 * i, 2 * player.getLevel(), "RIGHT","water");
+                    makeLanes = new Lanes(83 + 53 * i, player.getLevel(), "RIGHT","water");
                 }
             }
             else{
                 if (i>5 && i<11){
-                    makeLanes = new Lanes(83 + 53 * i, 2 * player.getLevel(), "LEFT","road");
+                    makeLanes = new Lanes(83 + 53 * i,  player.getLevel(), "LEFT","road");
                 }
                 if (i>=0 && i< 5){
-                    makeLanes = new Lanes(83 + 53 * i, 2 * player.getLevel(), "LEFT","water");
+                    makeLanes = new Lanes(83 + 53 * i,  player.getLevel(), "LEFT","water");
                 }
             }
             lanes[i] = makeLanes;
@@ -150,7 +151,6 @@ class MainGame extends JPanel implements KeyListener {
                     if (a.getAreaRect().contains(player.getX(), player.getFinalY()) && !isCollide) {
                         isCollide = true;
                         collidedLane = i;
-                        System.out.println("collision");
                     }
                 }
             }
@@ -184,7 +184,6 @@ class MainGame extends JPanel implements KeyListener {
                 }
             }
         }
-        //System.out.println(player.getLanePos());
         if (player.getLanePos() > 7) {
             if (!isCollide) {
                 int counter = 0;
@@ -230,8 +229,6 @@ class MainGame extends JPanel implements KeyListener {
                 if (player.getY() < totalMove) {
                     totalMove -= 53;
                     score += 10;
-                    //System.out.println("score= " + score);
-                    //System.out.println(totalMove);
                 }
                 if (totalMove <= 40) {
                     totalMove = 700;

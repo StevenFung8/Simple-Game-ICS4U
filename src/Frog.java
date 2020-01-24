@@ -10,7 +10,8 @@ import javax.swing.*;
 import javax.swing.Timer;
 class Frog {
     private double rotation=0;
-    private int posX,posY,posFinalY,lanePos,lives,level;
+    private int posX,posY,posFinalY,lanePos,lives,level,deathFrames;
+    private Image deathPic1,deathPic2,deathPic3,deathPic4,deathPic5,deathPic6,deathPic7;
     private int [] winSpots = {1,1,0,1,1};
     private Image[] frogPics = new Image[2];
     private Image frogPic,frogPic2;
@@ -23,12 +24,20 @@ class Frog {
         posX = 378;
         posY = 690;
         lanePos = 1;
+        deathFrames =0;
         lives = 3;
         level = 1;
         posFinalY = 690;
         try {
             frogPic = ImageIO.read(new File("Pictures/frogpic1.png"));
             frogPic2 = ImageIO.read(new File("Pictures/frogpic2.png"));
+            deathPic1 = ImageIO.read(new File("Pictures/death1.png"));
+            deathPic2 = ImageIO.read(new File("Pictures/death2.png"));
+            deathPic3 = ImageIO.read(new File("Pictures/death3.png"));
+            deathPic4 = ImageIO.read(new File("Pictures/death4.png"));
+            deathPic5 = ImageIO.read(new File("Pictures/death5.png"));
+            deathPic6 = ImageIO.read(new File("Pictures/death6.png"));
+            deathPic7 = ImageIO.read(new File("Pictures/death7.png"));
         }
         catch (IOException e) {
             System.out.println(e);
@@ -80,15 +89,16 @@ class Frog {
 
     }
     public void death(){
-        posX = 378;
-        posY = 690;
         qMoves=0;
+        deathFrames=140;
         lanePos = 1;
-        lives --;
+
+        //System.out.println(lives);
+
         posFinalY = 690;
         System.out.println(lives);
         if (lives == 0){
-            System.exit(0);
+            System.exit(69420);
         }
     }
     public void levelUp(int value){
@@ -97,8 +107,40 @@ class Frog {
         for (int i = 0 ; i < 5 ; i++){
             winSpots[i] = 0;
         }
-        System.out.println(level);
+        System.out.println("current level:" + level);
 
+    }
+    public void minusDeath(){
+        if (deathFrames>0){
+            deathFrames--;
+        }
+        if(deathFrames==140){
+            currentFrogPic=deathPic2;
+        }
+        if(deathFrames==120){
+            currentFrogPic=deathPic2;
+        }
+        else if(deathFrames==100){
+            currentFrogPic=deathPic3;
+        }
+        else if(deathFrames==80){
+            currentFrogPic=deathPic4;
+        }
+        else if(deathFrames==60){
+            currentFrogPic=deathPic5;
+        }
+        else if(deathFrames==40){
+            currentFrogPic=deathPic6;
+        }
+        else if(deathFrames==20){
+            currentFrogPic=deathPic7;
+        }
+        else if(deathFrames==1){
+            currentFrogPic=frogPic;
+            lives --;
+            posX = 378;
+            posY = 690;
+        }
     }
     public int getX(){
         return posX;
@@ -118,8 +160,8 @@ class Frog {
     public Image getImage() {
         if (qMoves > 10) {//delay so can't spam moves
             return frogPic2;
-        } else {
-            return frogPic;
+        }else{
+            return currentFrogPic;
         }
     }
     public int getqMoves(){return qMoves;}
@@ -161,15 +203,12 @@ class Frog {
         qMoves = 53;
         lanePos ++;
         direction="up";
-        System.out.println("up");
-        System.out.println(posFinalY);
     }
 
     public void moveDown() {
         qMoves = 53;
         posFinalY +=53;
         lanePos --;
-        System.out.println(posFinalY);
         if (lanePos < 1) {
             lanePos = 1;
         }
