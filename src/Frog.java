@@ -47,11 +47,13 @@ class Frog {
         currentFrogPic=frogPics[0];
     }
     public void checkBound(){
-        if (posX>=850){
+        if (posX>=775){
             death();
+            System.out.println("die");
         }
-        if (posX<=0){
+        if (posX<=25){
             death();
+            System.out.println("die");
         }
         if (posY>=690 && posFinalY>=690){
             posY=690;
@@ -60,8 +62,6 @@ class Frog {
         if (posY<=40 && posFinalY <= 40){
             posY = 690;
             posFinalY = 690;
-            posX=378-25;
-
         }
 
     }
@@ -96,14 +96,13 @@ class Frog {
         //System.out.println(lives);
 
         posFinalY = 690;
-        System.out.println(lives);
         if (lives == 0){
             System.exit(69420);
         }
     }
     public void levelUp(int value){
         level = value;
-        lives = 3;
+        lives = 4;
         for (int i = 0 ; i < 5 ; i++){
             winSpots[i] = 0;
         }

@@ -48,9 +48,7 @@ public class Frogger extends JFrame{
                     game.decreaseTime();
                     timePassed=0;
                 }
-
-
-
+                game.checkLevel();
             }
         }
     }
@@ -74,7 +72,7 @@ class MainGame extends JPanel implements KeyListener {
     private int time=30;
     private int frames=53;
     private int lives=3;
-
+    int currentLevel = 1;
     private static Image back,winFrogPic,heart;
     private static Lanes lanes[] = new Lanes [12];
     private static Rectangle winAreas[] = {new Rectangle(20,25,70,60),new Rectangle(180,25,70,60),new Rectangle(345,25,70,60),new Rectangle(505,25,70,60),new Rectangle(665,25,70,60)};
@@ -116,18 +114,18 @@ class MainGame extends JPanel implements KeyListener {
             Lanes makeLanes = null;
             if (i%2 == 1) {
                 if (i>5 && i<11){
-                    makeLanes = new Lanes(83 + 53 * i, player.getLevel(), "RIGHT","road");
+                    makeLanes = new Lanes(83 + 53 * i, 1, "RIGHT","road");
                 }
                 if (i>=0 && i<5){
-                    makeLanes = new Lanes(83 + 53 * i, player.getLevel(), "RIGHT","water");
+                    makeLanes = new Lanes(83 + 53 * i, 1, "RIGHT","water");
                 }
             }
             else{
                 if (i>5 && i<11){
-                    makeLanes = new Lanes(83 + 53 * i,  player.getLevel(), "LEFT","road");
+                    makeLanes = new Lanes(83 + 53 * i, 1, "LEFT","road");
                 }
                 if (i>=0 && i< 5){
-                    makeLanes = new Lanes(83 + 53 * i,  player.getLevel(), "LEFT","water");
+                    makeLanes = new Lanes(83 + 53 * i, 1 , "LEFT","water");
                 }
             }
             lanes[i] = makeLanes;
@@ -197,6 +195,19 @@ class MainGame extends JPanel implements KeyListener {
                     counter++;
                 }
                 player.death();
+            }
+        }
+    }
+    public void checkLevel(){
+        if (player.getLevel() > currentLevel){
+            speedUp();
+            currentLevel ++;
+        }
+    }
+    public void speedUp(){
+        for (int i = 0; i < 12; i++) {
+            if ((i > 5 && i < 11) || (i >= 0 && i < 5)) {
+                lanes[i].changeSpeed(1);
             }
         }
     }
