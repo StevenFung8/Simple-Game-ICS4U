@@ -1,4 +1,4 @@
-import javax.swing.*;
+/*import javax.swing.*;
 import java.awt.event.*;
 import java.awt.*;
 import java.util.*;
@@ -40,6 +40,7 @@ public class Panel extends JFrame implements ActionListener
 			This panel will allow us to store the other panels, and show the one we want.
 			The panels are being stored (are shown) based on a simple string
 		*/
+/*
         cards = new JPanel(cLayout);
         cards.add(mPage, "Start Screen Frogger");
         cards.add(GamePanel.g, "Frogger");
@@ -66,3 +67,4 @@ public class Panel extends JFrame implements ActionListener
         Panel cardEg = new Panel();
     }
 }
+*/

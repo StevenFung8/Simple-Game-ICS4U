@@ -11,7 +11,7 @@ import javax.swing.Timer;
 
 public class Frogger extends JFrame{
     Timer myTimer;
-    GamePanel game;
+    MainGame game;
     private int width=756;
     private int height=810;
     private int timePassed=0;
@@ -25,13 +25,13 @@ public class Frogger extends JFrame{
         myTimer = new Timer(10, new TickListener());
         myTimer.start();
 
-        game = new GamePanel();
+        game = new MainGame();
         add(game);
 
         setResizable(false);
         setVisible(true);
     }
-    public GamePanel getGamePanel(){
+    public MainGame getGamePanel(){
         return game;
     }
     class TickListener implements ActionListener{ //CALL FUNCTIONS HERE (JUST LIKE PYGAME "WHILE RUNNING LOOP")
@@ -61,7 +61,7 @@ public class Frogger extends JFrame{
 
 }
 
-class GamePanel extends JPanel implements KeyListener {
+class MainGame extends JPanel implements KeyListener {
     Frog player = new Frog();
     public boolean ready=false;
     private boolean clickUp,clickDown,clickLeft,clickRight = true;
@@ -75,11 +75,11 @@ class GamePanel extends JPanel implements KeyListener {
     private int lives=3;
 
     private static Image back,winFrogPic,heart;
-        private static Lanes lanes[] = new Lanes [12];
+    private static Lanes lanes[] = new Lanes [12];
     private static Rectangle winAreas[] = {new Rectangle(20,25,70,60),new Rectangle(180,25,70,60),new Rectangle(345,25,70,60),new Rectangle(505,25,70,60),new Rectangle(665,25,70,60)};
 
 
-    public GamePanel(){
+    public MainGame(){
         keys = new boolean[KeyEvent.KEY_LAST+1];
         try {
             // Loading font
@@ -106,33 +106,24 @@ class GamePanel extends JPanel implements KeyListener {
     public void decreaseTime(){
         time--;
     }
-    public void decraseFrames(){
-        frames--;
-    }
-    public static void movement(){
-        for (int i = 0; i<12;i++){
-            if ((i>5 && i<11) || (i>=0 && i<5) ) {
-                lanes[i].moveLanes();
-            }
-        }
-    }
+
     public static void loadLanes(){
         for (int i = 0; i<12 ; i ++){
             Lanes makeLanes = null;
             if (i%2 == 1) {
                 if (i>5 && i<11){
-                    makeLanes = new Lanes(70 + 53 * i, 1, "RIGHT","road");
+                    makeLanes = new Lanes(83 + 53 * i, 1, "RIGHT","road");
                 }
                 if (i>=0 && i<5){
-                    makeLanes = new Lanes(75 + 53 * i, 1, "RIGHT","water");
+                    makeLanes = new Lanes(83 + 53 * i, 1, "RIGHT","water");
                 }
             }
             else{
                 if (i>5 && i<11){
-                    makeLanes = new Lanes(70 + 53 * i, 1, "LEFT","road");
+                    makeLanes = new Lanes(83 + 53 * i, 1, "LEFT","road");
                 }
                 if (i>=0 && i< 5){
-                    makeLanes = new Lanes(75 + 53 * i, 1, "LEFT","water");
+                    makeLanes = new Lanes(83 + 53 * i, 1, "LEFT","water");
                 }
             }
             lanes[i] = makeLanes;
@@ -146,12 +137,6 @@ class GamePanel extends JPanel implements KeyListener {
             }
         }
     }
-    public boolean collisionCheck(Frog player, Area a){
-        return player.getX() < a.getAx() + a.getWidth() - 5 &&
-                player.getX() + a.getWidth() > a.getAx() &&
-                player.getY() < a.getAy() + a.getHeight() &&
-                player.getY() + a.getHeight() > a.getAy();
-    }
     public void collision() {
         boolean isCollide = false;
         int collidedLane = 0;
@@ -159,11 +144,10 @@ class GamePanel extends JPanel implements KeyListener {
             if ((i > 5 && i < 11) || (i >= 0 && i < 5)) {
                 for (Area a : lanes[i].getAreas()) {
                     //if (collisionCheck(player, a) && !isCollide) {
-                    if (a.getAreaRect().contains(player.getX(), player.getY()) && !isCollide) {
+                    if (a.getAreaRect().contains(player.getX(), player.getFinalY()) && !isCollide) {
                         isCollide = true;
                         collidedLane = i;
-                        //System.out.println(a.getAx());
-                        //System.out.println("collision");
+                        System.out.println("collision");
                     }
                 }
             }
@@ -177,17 +161,21 @@ class GamePanel extends JPanel implements KeyListener {
             if (isCollide) {
                 int counter = 0;
                 for (Rectangle w : winAreas) {
-                    if (w.contains(player.getX(), player.getY())) {
+                    if (w.contains(player.getX(), player.getFinalY())) {
                         System.out.println("winner");
                         player.win(counter);
                     }
                     counter++;
                 }
                 if (lanes[collidedLane].getDirection().equals("LEFT")) {
-                    player.moveX(-1/*(lanes[i].getSpeed()*/);
+                    if (player.getqMoves() == 0) {
+                        player.moveX(-(lanes[collidedLane].getSpeed()));
+                    }
                 }
                 if (lanes[collidedLane].getDirection().equals("RIGHT")) {
-                    player.moveX(1/*lanes[i].getSpeed()*/);
+                    if (player.getqMoves() == 0) {
+                        player.moveX(lanes[collidedLane].getSpeed());
+                    }
                 }
             }
         }
@@ -196,7 +184,7 @@ class GamePanel extends JPanel implements KeyListener {
             if (!isCollide) {
                 int counter = 0;
                 for (Rectangle w : winAreas) {
-                    if (w.contains(player.getX(), player.getY())) {
+                    if (w.contains(player.getX(), player.getFinalY())) {
                         System.out.println("winner");
                         player.win(counter);
                     }
@@ -235,8 +223,8 @@ class GamePanel extends JPanel implements KeyListener {
                 if (player.getY() < totalMove) {
                     totalMove -= 53;
                     score += 10;
-                    System.out.println("score= " + score);
-                    System.out.println(totalMove);
+                    //System.out.println("score= " + score);
+                    //System.out.println(totalMove);
                 }
                 if (totalMove <= 40) {
                     totalMove = 700;
@@ -300,14 +288,16 @@ class GamePanel extends JPanel implements KeyListener {
         int winCounter = 0;
         for (int num : player.getWinSpots()) {
             if (num == 1) {
-                g.drawImage(winFrogPic, winAreas[winCounter].x, winAreas[winCounter].y, this);
+                g.drawImage(winFrogPic, winAreas[winCounter].x + 10, winAreas[winCounter].y + 10, this);
                 score+=100;
             }
             winCounter++;
         }
-        g.drawRect(player.getX(),player.getY(),2,2);
         g.fillRect(500, 750, time * 5, 15);
         g2D.drawImage((BufferedImage) player.getImage(), rotOp, player.getX()-25, player.getY()-25);
+        g.drawRect(player.getX(),player.getY(),2,2);
+        g.setColor(new Color (241,255, 15));
+        g.drawRect(player.getX(),player.getFinalY(),2,2);
     }
 
     @Override

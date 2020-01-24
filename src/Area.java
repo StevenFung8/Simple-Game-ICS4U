@@ -33,7 +33,7 @@ class Area {
         return obstaclePic;
     }
     public Rectangle getAreaRect(){ //System.out.println(areaRect);
-         return areaRect;}
+        return areaRect;}
     public String toString(){
         return String.format("%d,%d,%d,%d",ax,ay,width,height);
     }
@@ -41,3 +41,4 @@ class Area {
         ax = interval;
     }
 }
+
