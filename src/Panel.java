@@ -1,18 +1,14 @@
 import javax.swing.*;
-import java.awt.event.KeyListener;
-
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.border.*;
-
+////////////Mr Mckenzies code
 public class Panel extends JFrame{
     private JLayeredPane layeredPane=new JLayeredPane();
 
     public Panel() {
         super("Use LayeredPane to put things on top of one another");
         setSize(756,810);
-
         ImageIcon backPic = new ImageIcon("Pictures//startScreen.png");
         JLabel back = new JLabel(backPic);
         back.setBounds(0, 0,backPic.getIconWidth(),backPic.getIconHeight());
@@ -25,8 +21,8 @@ public class Panel extends JFrame{
         startBtn.addActionListener(new ClickStart());
         startBtn.setBounds((756/2)-startPic.getIconHeight()-55,600,startPic.getIconWidth(),startPic.getIconHeight());
         layeredPane.add(startBtn,2);
-
         setContentPane(layeredPane);
+
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
     }
@@ -34,7 +30,6 @@ public class Panel extends JFrame{
     public static void main(String[] arguments) {
         Panel frame = new Panel();
     }
-
     class ClickStart implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent evt){
