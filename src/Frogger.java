@@ -115,18 +115,18 @@ class MainGame extends JPanel implements KeyListener {
             Lanes makeLanes = null;
             if (i%2 == 1) {
                 if (i>5 && i<11){
-                    makeLanes = new Lanes(83 + 53 * i, player.getLevel(), "RIGHT","road");
+                    makeLanes = new Lanes(83 + 53 * i, 2* player.getLevel(), "RIGHT","road");
                 }
                 if (i>=0 && i<5){
-                    makeLanes = new Lanes(83 + 53 * i, player.getLevel(), "RIGHT","water");
+                    makeLanes = new Lanes(83 + 53 * i, 2 * player.getLevel(), "RIGHT","water");
                 }
             }
             else{
                 if (i>5 && i<11){
-                    makeLanes = new Lanes(83 + 53 * i, 1, "LEFT","road");
+                    makeLanes = new Lanes(83 + 53 * i, 2 * player.getLevel(), "LEFT","road");
                 }
                 if (i>=0 && i< 5){
-                    makeLanes = new Lanes(83 + 53 * i, 1, "LEFT","water");
+                    makeLanes = new Lanes(83 + 53 * i, 2 * player.getLevel(), "LEFT","water");
                 }
             }
             lanes[i] = makeLanes;
@@ -269,8 +269,8 @@ class MainGame extends JPanel implements KeyListener {
                 for (Area a : lanes[i].getAreas()) { //start at 6
                     //System.out.println(a);
                     if ((i > 5 && i < 11) || (i >= 0 && i < 5)) {
-                        // g.drawRect(a.getAx(),a.getAy(),a.getWidth(),a.getHeight());
-                        //g.drawRect((int) a.getAreaRect().getX(), (int) a.getAreaRect().getY(), (int) a.getAreaRect().getWidth(), (int) a.getAreaRect().getHeight());
+                        g.drawRect(a.getAx(),a.getAy(),a.getWidth(),a.getHeight());
+                        g.drawRect((int) a.getAreaRect().getX(), (int) a.getAreaRect().getY(), (int) a.getAreaRect().getWidth(), (int) a.getAreaRect().getHeight());
                         g.drawImage(a.getPicture(), a.getAx(), a.getAy(), this);
                     }
                 }
@@ -303,9 +303,6 @@ class MainGame extends JPanel implements KeyListener {
         }
         g.fillRect(500, 750, time * 5, 15);
         g2D.drawImage((BufferedImage) player.getImage(), rotOp, player.getX()-25, player.getY()-25);
-        g.drawRect(player.getX(),player.getY(),2,2);
-        g.setColor(new Color (241,255, 15));
-        g.drawRect(player.getX(),player.getFinalY(),2,2);
     }
 
     @Override

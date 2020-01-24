@@ -11,7 +11,7 @@ import javax.swing.Timer;
 class Frog {
     private double rotation=0;
     private int posX,posY,posFinalY,lanePos,lives,level;
-    private int [] winSpots = {0,0,0,0,0};
+    private int [] winSpots = {1,1,0,1,1};
     private Image[] frogPics = new Image[2];
     private Image frogPic,frogPic2;
     private Image  currentFrogPic;
@@ -97,6 +97,7 @@ class Frog {
         for (int i = 0 ; i < 5 ; i++){
             winSpots[i] = 0;
         }
+        System.out.println(level);
 
     }
     public int getX(){

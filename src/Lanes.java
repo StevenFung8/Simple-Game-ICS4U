@@ -33,7 +33,6 @@ class Lanes {
             for (int i = 0; i< areas.length ; i++) {
                 counter++;
                 Area newAreas = null;
-
                 if (direction == "RIGHT") { // i * randint(1,3) * 100 + obstaclePics[0].getWidth(null)
                     newAreas = new Area(i * randint(1,3) * 100 + obstaclePics[0].getWidth(null), yPos + 2, 50, 50, obstaclePics[0]);
                 }
