@@ -3,7 +3,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.awt.*;
-class Lanes {
+class Lanes { //this class is used to generate each lane in the game. We decided to seperate the section of the game
+    // into lanes to provide easy manipulation to whatever
     private int yPos ;
     private int speed;
     private String direction;
@@ -34,11 +35,11 @@ class Lanes {
                 counter++;
                 Area newAreas = null;
                 if (direction == "RIGHT") { // i * randint(1,3) * 100 + obstaclePics[0].getWidth(null)
-                    newAreas = new Area(i * randint(1,3) * 100 + obstaclePics[0].getWidth(null), yPos + 2, 50, 50, obstaclePics[0]);
+                    newAreas = new Area(i * 100 + randint(50,100) +  obstaclePics[0].getWidth(null), yPos + 2, 50, 50, obstaclePics[0]);
                 }
                 else if (direction == "LEFT"){
                     Image newPics = obstaclePics[randint(1,2)];
-                    newAreas = new Area(i * randint(1,3) * 100 + newPics.getWidth(null)  , yPos + 2, 50, 50, newPics);
+                    newAreas = new Area(i * 100 + randint(50,100) + newPics.getWidth(null)  , yPos + 2, 50, 50, newPics);
                 }
                 areas[counter - 1] = newAreas;
             }
@@ -47,8 +48,9 @@ class Lanes {
             for (int i = 0; i < areas.length ; i++) {
                 counter++;
                 Image newPics = obstaclePics[randint(3,5)];
-                Area newAreas = new Area(i * randint(1,3) * 100 + newPics.getWidth(null)  , yPos +2 ,  newPics.getHeight(null), newPics.getWidth(null), newPics);
+                Area newAreas = new Area(i*100 + randint(50,100) + newPics.getWidth(null)  , yPos +2 ,  newPics.getHeight(null), newPics.getWidth(null), newPics);
                 areas[counter - 1] = newAreas;
+                System.out.println(i*100 + randint(50,100) +  newPics.getWidth(null));
             }
 
         }
@@ -74,9 +76,9 @@ public void moveLanes() {
         if (direction == "LEFT") {
             a.setAx(a.getAx() - speed);
             a.getAreaRect().x -= speed;
-            if (a.getAx() <= -(a.getPicture().getWidth(null) + 50)) {
-                a.setAx(850 + a.getPicture().getWidth(null));
-                a.getAreaRect().x = 850 + a.getPicture().getWidth(null);
+            if (a.getAx() <= -(a.getPicture().getWidth(null))) {
+                a.setAx(800 + a.getPicture().getWidth(null) + 50 );
+                a.getAreaRect().x = 800 + a.getPicture().getWidth(null) + 50;
             }
         }
         if (direction == "RIGHT") {
@@ -84,7 +86,7 @@ public void moveLanes() {
             a.getAreaRect().x += speed;
             if (a.getAx() >= 850 + a.getPicture().getWidth(null)) {
                 a.setAx(-(a.getPicture().getWidth(null) + 50));
-                a.getAreaRect().x = -(50 + a.getPicture().getWidth(null));
+                a.getAreaRect().x = -(a.getPicture().getWidth(null)+50 );
             }
         }
     }

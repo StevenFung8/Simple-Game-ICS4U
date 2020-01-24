@@ -12,7 +12,7 @@ class Frog {
     private double rotation=0;
     private int posX,posY,posFinalY,lanePos,lives,level,deathFrames;
     private Image deathPic1,deathPic2,deathPic3,deathPic4,deathPic5,deathPic6,deathPic7;
-    private int [] winSpots = {1,1,0,1,1};
+    private int [] winSpots = {0,0,0,0,0};
     private Image[] frogPics = new Image[2];
     private Image frogPic,frogPic2;
     private Image  currentFrogPic;
@@ -76,7 +76,6 @@ class Frog {
         posY = 690;
         qMoves=0;
         lanePos = 1;
-        lives++;
         posFinalY = 690;
         if (winSpots[index] == 0) {
             winSpots[index] = 1;
@@ -99,21 +98,19 @@ class Frog {
         qMoves=0;
         deathFrames=140;
         lanePos = 1;
-
-
         posFinalY = 690;
-        System.out.println(lives);
+        //System.out.println(lives);
         if (lives == 0){
             System.exit(69420);
         }
     }
     public void levelUp(int value){
         level = value;
-        lives = 4;
+        lives = 3;
         for (int i = 0 ; i < 5 ; i++){
             winSpots[i] = 0;
         }
-        System.out.println("current level:" + level);
+        //System.out.println("current level:" + level);
 
     }
     public void minusDeath(){
@@ -147,7 +144,7 @@ class Frog {
             posX = 378;
             posY = 690;
         }
-        System.out.println(deathFrames);
+        //(deathFrames);
     }
     public int getX(){
         return posX;
