@@ -5,6 +5,7 @@ import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import javax.imageio.*;
 import javax.swing.*;
 import javax.swing.Timer;
@@ -18,7 +19,7 @@ public class Frogger extends JFrame{
     private int frames=53;
 
     public Frogger() {
-        super("Frogger Dylan & Steven ltd copyright");
+        super("Frogger by Dylan and Steven");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(width,height);
 
@@ -76,8 +77,7 @@ class MainGame extends JPanel implements KeyListener {
     int currentLevel = 1;
     private static Image back,winFrogPic,heart;
     private static Lanes lanes[] = new Lanes [12];
-    private static Rectangle winAreas[] = {new Rectangle(20,25,70,60),new Rectangle(180,25,70,60),new Rectangle(345,25,70,60),new Rectangle(505,25,70,60),new Rectangle(665,25,70,60)};
-
+    private ArrayList<Rectangle> winAreas  = new ArrayList<Rectangle>();
 
     public MainGame(){
         keys = new boolean[KeyEvent.KEY_LAST+1];
@@ -98,6 +98,12 @@ class MainGame extends JPanel implements KeyListener {
         catch (IOException e) {
             System.out.println(e);
         }
+        winAreas.add(new Rectangle(20,25,70,60));
+        winAreas.add(new Rectangle(180,25,70,60));
+        winAreas.add(new Rectangle(345,25,70,60));
+        winAreas.add(new Rectangle(505,25,70,60));
+        winAreas.add(new Rectangle(665,25,70,60));
+
         addKeyListener(this);
         loadLanes();
 
@@ -146,14 +152,12 @@ class MainGame extends JPanel implements KeyListener {
                 player.death();
                 time = 30;
             }
-            System.out.println("die");
         }
         if (player.getX()<=0){
             if(player.getDeathFrames() == 0) {
                 player.death();
                 time =30;
             }
-            System.out.println("die");
         }
         if (player.getY()>=690 && player.getFinalY()>=690){
             player.changeY(690);
@@ -211,16 +215,33 @@ class MainGame extends JPanel implements KeyListener {
         if (player.getLanePos() > 7) {
             if (!isCollide) {
                 int counter = 0;
+                boolean winCondition = false;
                 for (Rectangle w : winAreas) {
                     if (w.contains(player.getX(), player.getFinalY())) {
                         System.out.println("winner");
+                        counter = winAreas.indexOf(w);
+                        winCondition = true;
+                        /*
                         score+=100;
                         time = 30;
                         player.win(counter);
+                                              */
                     }
-                    counter++;
                 }
+                /*
+                time = 30;
                 player.death();
+                 */
+                if (winCondition){
+                    score +=100;
+                    time = 30;
+                    totalMove = 700;
+                    player.win(counter);
+                }
+                else{
+                    time = 30;
+                    player.death();
+                }
             }
         }
     }
@@ -236,6 +257,9 @@ class MainGame extends JPanel implements KeyListener {
                 lanes[i].changeSpeed(1);
             }
         }
+    }
+    public void resetGame(){
+
     }
     public void addNotify() {
         super.addNotify();
@@ -303,8 +327,8 @@ class MainGame extends JPanel implements KeyListener {
                 for (Area a : lanes[i].getAreas()) { //start at 6
                     //System.out.println(a);
                     if ((i > 5 && i < 11) || (i >= 0 && i < 5)) {
-                        g.drawRect(a.getAx(),a.getAy(),a.getWidth(),a.getHeight());
-                        g.drawRect((int) a.getAreaRect().getX(), (int) a.getAreaRect().getY(), (int) a.getAreaRect().getWidth(), (int) a.getAreaRect().getHeight());
+                        //g.drawRect(a.getAx(),a.getAy(),a.getWidth(),a.getHeight());
+                        //g.drawRect((int) a.getAreaRect().getX(), (int) a.getAreaRect().getY(), (int) a.getAreaRect().getWidth(), (int) a.getAreaRect().getHeight());
                         g.drawImage(a.getPicture(), a.getAx(), a.getAy(), this);
                     }
                 }
@@ -325,13 +349,13 @@ class MainGame extends JPanel implements KeyListener {
             g.setColor( new Color(15, 10, 255));
             g.drawRect(w.x,w.y,w.width,w.height);
         }
+        */
 
-         */
 
         int winCounter = 0;
         for (int num : player.getWinSpots()) {
             if (num == 1) {
-                g.drawImage(winFrogPic, winAreas[winCounter].x + 10, winAreas[winCounter].y + 10, this);
+                g.drawImage(winFrogPic, winAreas.get(winCounter).x + 10, winAreas.get(winCounter).y + 10, this);
             }
             winCounter++;
         }
