@@ -12,10 +12,11 @@ class Frog {
     private double rotation=0;
     private int posX,posY,lanePos,lives;
     private int [] winSpots = {0,0,0,0,0};
-    private Image[] frogPics = new Image[2];
+
     private Image frogPic,frogPic2;
     private Image  currentFrogPic;
-    private int frames=53;
+    private Image deathPic1,deathPic2,deathPic3,deathPic4,deathPic5,deathPic6,deathPic7;
+    private int deathFrames=0;
     private int qMoves=0;
     private int frameCount=0;
     private String direction;
@@ -27,13 +28,21 @@ class Frog {
         try {
             frogPic = ImageIO.read(new File("Pictures/frogpic1.png"));
             frogPic2 = ImageIO.read(new File("Pictures/frogpic2.png"));
+            deathPic1 = ImageIO.read(new File("Pictures/death1.png"));
+            deathPic2 = ImageIO.read(new File("Pictures/death2.png"));
+            deathPic3 = ImageIO.read(new File("Pictures/death3.png"));
+            deathPic4 = ImageIO.read(new File("Pictures/death4.png"));
+            deathPic5 = ImageIO.read(new File("Pictures/death5.png"));
+            deathPic6 = ImageIO.read(new File("Pictures/death6.png"));
+            deathPic7 = ImageIO.read(new File("Pictures/death7.png"));
+
+
         }
         catch (IOException e) {
             System.out.println(e);
         }
-        frogPics[0]=frogPic;
-        frogPics[1]=frogPic2;
-        currentFrogPic=frogPics[0];
+
+        currentFrogPic=frogPic;
     }
     public void checkBound(){
         if (posX>=850){
@@ -65,16 +74,18 @@ class Frog {
         }
     }
     public void death(){
-        posX = 378;
-        posY = 690;
+
         qMoves=0;
+        deathFrames=140;
         lanePos = 1;
-        lives --;
-        System.out.println(lives);
+
+        //System.out.println(lives);
         if (lives == 0){
             System.exit(69420);
         }
+
     }
+
     public int getX(){
         return posX;
     }
@@ -87,9 +98,11 @@ class Frog {
     public Image getImage() {
         if (qMoves > 10) {//delay so can't spam moves
             return frogPic2;
-        } else {
-            return frogPic;
+
+        }else{
+            return currentFrogPic;
         }
+
     }
     public int getqMoves(){return qMoves;}
     public int getLanePos() { return lanePos;}
@@ -97,23 +110,62 @@ class Frog {
     public void moveX(int value){
         posX += value;
     }
-    public void minuesqMoves() {
-        System.out.println(qMoves);
-        System.out.println("x" + posX + "y" + posY);
+    public void minusDeath(){
 
-        if (qMoves > 10) {
-            qMoves--;
+        if (deathFrames>0){
+            deathFrames--;
+            System.out.println(deathFrames);
+        }
+        if(deathFrames==140){
+            currentFrogPic=deathPic2;
+        }
+        if(deathFrames==120){
+            currentFrogPic=deathPic2;
+        }
+        else if(deathFrames==100){
+            currentFrogPic=deathPic3;
+        }
+        else if(deathFrames==80){
+            currentFrogPic=deathPic4;
+        }
+        else if(deathFrames==60){
+            currentFrogPic=deathPic5;
+        }
+        else if(deathFrames==40){
+            currentFrogPic=deathPic6;
+        }
+        else if(deathFrames==20){
+            currentFrogPic=deathPic7;
+
+        }
+        else if(deathFrames==1){
+            currentFrogPic=frogPic;
+            System.out.println("done");
+            lives --;
+            posX = 378;
+            posY = 690;
+        }
+
+
+
+    }
+    public void minuesqMoves() {
+//        System.out.println(qMoves);
+//        System.out.println("x" + posX + "y" + posY);
+
+        if (qMoves >= 8) {
+            qMoves-=2;
             if (direction.equals("up")) {
-                posY -= 1;
+                posY -= 2;
             }
             if (direction.equals("down")) {
-                posY += 1;
+                posY += 2;
             }
             if (direction.equals("left")) {
-                posX -= 1;
+                posX -= 2;
             }
             if (direction.equals("right")) {
-                posX += 1;
+                posX += 2;
             }
         } else {
             qMoves = 0;
@@ -146,6 +198,6 @@ class Frog {
         qMoves=63;
         direction="left";
     }
-    public void decreaseFrames(){frames--;}
+
 
 }

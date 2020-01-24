@@ -11,7 +11,7 @@ import javax.swing.Timer;
 
 public class Frogger extends JFrame{
     Timer myTimer;
-    GamePanel game;
+    MainGame game;
     private int width=756;
     private int height=810;
     private int timePassed=0;
@@ -25,13 +25,13 @@ public class Frogger extends JFrame{
         myTimer = new Timer(10, new TickListener());
         myTimer.start();
 
-        game = new GamePanel();
+        game = new MainGame();
         add(game);
 
         setResizable(false);
         setVisible(true);
     }
-    public GamePanel getGamePanel(){
+    public MainGame getGamePanel(){
         return game;
     }
     class TickListener implements ActionListener{ //CALL FUNCTIONS HERE (JUST LIKE PYGAME "WHILE RUNNING LOOP")
@@ -42,6 +42,8 @@ public class Frogger extends JFrame{
                 game.player.minuesqMoves();
                 game.collision();
                 game.repaint();
+                game.player.minusDeath();
+
                 timePassed+=10;
                 if (timePassed==1000){
                     game.decreaseTime();
@@ -61,7 +63,7 @@ public class Frogger extends JFrame{
 
 }
 
-class GamePanel extends JPanel implements KeyListener {
+class MainGame extends JPanel implements KeyListener {
     Frog player = new Frog();
     public boolean ready=false;
     private boolean clickUp,clickDown,clickLeft,clickRight = true;
@@ -71,15 +73,14 @@ class GamePanel extends JPanel implements KeyListener {
     private int score=0;
     private int totalMove=700;
     private int time=30;
-    private int frames=53;
-    private int lives=3;
+
 
     private static Image back,winFrogPic,heart;
         private static Lanes lanes[] = new Lanes [12];
     private static Rectangle winAreas[] = {new Rectangle(20,25,70,60),new Rectangle(180,25,70,60),new Rectangle(345,25,70,60),new Rectangle(505,25,70,60),new Rectangle(665,25,70,60)};
 
 
-    public GamePanel(){
+    public MainGame(){
         keys = new boolean[KeyEvent.KEY_LAST+1];
         try {
             // Loading font
@@ -106,9 +107,7 @@ class GamePanel extends JPanel implements KeyListener {
     public void decreaseTime(){
         time--;
     }
-    public void decraseFrames(){
-        frames--;
-    }
+
     public static void movement(){
         for (int i = 0; i<12;i++){
             if ((i>5 && i<11) || (i>=0 && i<5) ) {
@@ -235,8 +234,8 @@ class GamePanel extends JPanel implements KeyListener {
                 if (player.getY() < totalMove) {
                     totalMove -= 53;
                     score += 10;
-                    System.out.println("score= " + score);
-                    System.out.println(totalMove);
+
+
                 }
                 if (totalMove <= 40) {
                     totalMove = 700;
